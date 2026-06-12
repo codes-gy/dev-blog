@@ -5,7 +5,11 @@
     "printWidth": 120,
     "trailingComma": "all",
     "bracketSpacing": true,
-    "plugins": ["@trivago/prettier-plugin-sort-imports", "prettier-plugin-tailwindcss"],
+    "plugins": [
+        "@trivago/prettier-plugin-sort-imports",
+        "prettier-plugin-tailwindcss",
+        "prettier-plugin-prisma"
+    ],
     "importOrder": [
         "^react$",
         "^next/(.*)$",

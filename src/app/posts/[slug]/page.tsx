@@ -1,7 +1,5 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
-import { incrementViews } from '@/src/app/actions/api';
-//import { incrementViews } from '@/src/app/actions/api';
 import { Metadata } from 'next';
 import AdSenseInArticle from '@/src/components/posts/AdSenseInArticle';
 import Comments from '@/src/components/posts/Comments';
@@ -16,22 +14,63 @@ interface PostPageProps {
         slug: string;
     }>;
 }
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 const CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME || '';
 const DEFAULT_OG_IMAGE = process.env.DEFAULT_OG_IMAGE_PATH || 'https://devlog.io/default-og-image.png';
 const DEFAULT_IMAGE = process.env.DEFAULT_IMAGE_PATH || 'https://devlog.io/default-cover-image.png';
 
+function cleanImageUrl(url: string | null | undefined): string {
+    if (!url) return '';
+    return url.replace(/\s+/g, '').trim();
+}
+
+function getPureUrl(url: string | null | undefined): string {
+    if (!url) return '';
+    let cleaned = url.replace(/\s+/g, '').trim();
+
+    // 1. 만약 이미 Cloudinary fetch 레이어가 씌워져 있다면 알맹이(S3 주소)만 쏙 빼냅니다.
+    if (cleaned.includes('image/fetch/')) {
+        const parts = cleaned.split('image/fetch/');
+        const realUrlPart = parts[parts.length - 1];
+        const httpIndex = realUrlPart.indexOf('http');
+        if (httpIndex !== -1) {
+            cleaned = realUrlPart.substring(httpIndex);
+        }
+    }
+
+    // 2. 🌟 [핵심] %252F 같은 중복 인코딩 찌꺼기가 완전히 사라질 때까지 완전히 디코딩합니다.
+    let decoded = cleaned;
+    while (decoded.includes('%')) {
+        try {
+            const nextDecoded = decodeURIComponent(decoded);
+            if (nextDecoded === decoded) break;
+            decoded = nextDecoded;
+        } catch (e) {
+            break;
+        }
+    }
+
+    return decoded;
+}
 function getCloudinaryOgUrl(imageUrl: string | null | undefined): string {
-    if (!imageUrl) return DEFAULT_OG_IMAGE;
-    if (!CLOUDINARY_CLOUD_NAME) return imageUrl;
-    const encodedUrl = encodeURIComponent(imageUrl);
+    const pureUrl = getPureUrl(imageUrl);
+    if (!pureUrl) return DEFAULT_OG_IMAGE;
+    if (!CLOUDINARY_CLOUD_NAME) return pureUrl;
+
+    // 순수해진 S3 주소를 딱 한 번만 안전하게 인코딩하여 Cloudinary에 전달 (최적화 ON!)
+    const encodedUrl = encodeURIComponent(pureUrl);
     return `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/fetch/c_fill,g_auto,w_1200,h_630,f_auto,q_auto/${encodedUrl}`;
 }
 
 function getCloudinaryCoverUrl(imageUrl: string | null | undefined): string {
-    if (!imageUrl) return DEFAULT_IMAGE;
-    if (!CLOUDINARY_CLOUD_NAME) return imageUrl;
-    const encodedUrl = encodeURIComponent(imageUrl);
+    const pureUrl = getPureUrl(imageUrl);
+    if (!pureUrl) return DEFAULT_IMAGE;
+    if (!CLOUDINARY_CLOUD_NAME) return pureUrl;
+
+    // 순수해진 S3 주소를 딱 한 번만 안전하게 인코딩하여 Cloudinary에 전달 (최적화 ON!)
+    const encodedUrl = encodeURIComponent(pureUrl);
     return `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/fetch/c_fill,g_auto,w_1200,h_300,f_auto,q_auto/${encodedUrl}`;
 }
 
@@ -46,7 +85,7 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
     }
     const pageTitle = `${post.title} | DevLog`;
     const pageDesc = post.description || '개발 및 기술 블로그입니다.';
-    const ogImageUrl = getCloudinaryOgUrl(post.coverImage);
+    const ogImageUrl = cleanImageUrl(post.coverImage) || DEFAULT_OG_IMAGE;
 
     return {
         title: pageTitle,
@@ -79,7 +118,9 @@ export default async function PostDetailPage({ params }: PostPageProps) {
     const post = await getBlogPost(slug);
     if (!post) notFound();
     const content = await getPostContent(post.id);
-    const coverImageUrl = getCloudinaryCoverUrl(post.coverImage);
+    const rawCoverUrl = cleanImageUrl(post.coverImage);
+    const coverImageUrl = rawCoverUrl || DEFAULT_IMAGE;
+
     // 2. 진입 시 조회수를 실시간으로 1 올리고 누적 데이터를 읽어옵니다.
     const data = await prisma.post.findUnique({
         where: { slug },
@@ -128,7 +169,7 @@ export default async function PostDetailPage({ params }: PostPageProps) {
 
             <hr className="mt-16 mb-10 border-slate-200 dark:border-slate-800" />
 
-            {/* 🎯 [추가] 본문 하단 전용 구글 애드센스 광고 배치
+            {/* [추가] 본문 하단 전용 구글 애드센스 광고 배치
                 - slot 값은 나중에 광고가 승인된 후 애드센스 대시보드에서 '신규 광고 단위 생성'을 통해 생성된 10자리 숫자를 넣어주시면 됩니다. 우선은 아무 임의 숫자나 비워두셔도 심사용으로는 문제 없습니다.
             */}
             <AdSenseInArticle />
