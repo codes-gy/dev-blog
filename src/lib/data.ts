@@ -1,9 +1,4 @@
-import {
-    BlockObjectResponse,
-    Client,
-    isFullBlock,
-    isFullPage,
-} from '@notionhq/client';
+import { BlockObjectResponse, Client, isFullBlock, isFullPage } from '@notionhq/client';
 import type {
     PageObjectResponse,
     QueryDataSourceParameters,
@@ -42,6 +37,13 @@ type NotionBlockWithText =
     | { type: 'heading_3'; heading_3: { rich_text: RichTextItem[] } }
     | { type: 'paragraph'; paragraph: { rich_text: RichTextItem[] } }
     | {
+          type: 'code';
+          code: {
+              rich_text: RichTextItem[];
+              language: string;
+          };
+      }
+    | {
           type: 'bulleted_list_item';
           bulleted_list_item: {
               rich_text: RichTextItem[];
@@ -56,10 +58,7 @@ type NotionBlockWithText =
           };
       };
 
-interface ExtendedBlockObjectResponse extends Omit<
-    BlockObjectResponse,
-    'type'
-> {
+interface ExtendedBlockObjectResponse extends Omit<BlockObjectResponse, 'type'> {
     type: string;
     bulleted_list_item?: {
         rich_text: RichTextItem[];
@@ -98,8 +97,7 @@ function getDate(prop: PageProperty | undefined): string {
 }
 
 function getCover(page: PageObjectResponse): string {
-    const fallback =
-        'https://app.notion.com/images/page-cover/rijksmuseum_mignons_1660.jpg';
+    const fallback = 'https://app.notion.com/images/page-cover/rijksmuseum_mignons_1660.jpg';
 
     if (!page.cover) return fallback;
 
@@ -130,10 +128,7 @@ export async function getBlogPosts(
 
     try {
         type DataSourceFilter = QueryDataSourceParameters['filter'];
-        type DataSourceAndFilterList = Extract<
-            DataSourceFilter,
-            { and: unknown }
-        >['and'];
+        type DataSourceAndFilterList = Extract<DataSourceFilter, { and: unknown }>['and'];
         type NotionFilterItem = DataSourceAndFilterList[number];
         const filterAndArray: NotionFilterItem[] = [
             {
@@ -160,21 +155,20 @@ export async function getBlogPosts(
             });
         }
 
-        const response: QueryDataSourceResponse =
-            await notion.dataSources.query({
-                data_source_id: DATA_SOURCE_ID,
-                page_size: pageSize, //한 번에 호출할 최대 게시글 개수
-                start_cursor: startCursor, //주소창에서 넘겨받은 다음 페이지 시작점 커서 ID
-                filter: {
-                    and: filterAndArray,
+        const response: QueryDataSourceResponse = await notion.dataSources.query({
+            data_source_id: DATA_SOURCE_ID,
+            page_size: pageSize, //한 번에 호출할 최대 게시글 개수
+            start_cursor: startCursor, //주소창에서 넘겨받은 다음 페이지 시작점 커서 ID
+            filter: {
+                and: filterAndArray,
+            },
+            sorts: [
+                {
+                    property: 'PublishedAt',
+                    direction: 'descending',
                 },
-                sorts: [
-                    {
-                        property: 'PublishedAt',
-                        direction: 'descending',
-                    },
-                ],
-            });
+            ],
+        });
 
         const posts = response.results.filter(isFullPage).map((page): Post => {
             const props = page.properties;
@@ -183,8 +177,7 @@ export async function getBlogPosts(
                 id: page.id,
                 title: getText(props['Title']) || '제목 없음',
                 slug: getText(props['Slug']),
-                description:
-                    getText(props['Summary']) || '본문 요약문이 없습니다.',
+                description: getText(props['Summary']) || '본문 요약문이 없습니다.',
                 category: getSelect(props['Category']) || '일반',
                 publishedAt: getDate(props['PublishedAt']) || '날짜 미정',
                 coverImage: getCover(page),
@@ -209,22 +202,21 @@ export async function getBlogPost(slug: string): Promise<Post | null> {
         return null;
     }
     try {
-        const response: QueryDataSourceResponse =
-            await notion.dataSources.query({
-                data_source_id: DATA_SOURCE_ID,
-                filter: {
-                    and: [
-                        {
-                            property: 'Published',
-                            checkbox: { equals: true },
-                        },
-                        {
-                            property: 'Slug',
-                            rich_text: { equals: slug }, //  주소창의 slug와 노션의 Slug가 일치하는지 필터링
-                        },
-                    ],
-                },
-            });
+        const response: QueryDataSourceResponse = await notion.dataSources.query({
+            data_source_id: DATA_SOURCE_ID,
+            filter: {
+                and: [
+                    {
+                        property: 'Published',
+                        checkbox: { equals: true },
+                    },
+                    {
+                        property: 'Slug',
+                        rich_text: { equals: slug }, //  주소창의 slug와 노션의 Slug가 일치하는지 필터링
+                    },
+                ],
+            },
+        });
 
         // 만약 조건에 맞는 글이 노션에 없다면 null을 반환
         if (response.results.length === 0) {
@@ -257,9 +249,7 @@ export async function getBlogPost(slug: string): Promise<Post | null> {
 export async function getPostContent(blockId: string): Promise<string> {
     try {
         // 1. 모든 블록을 담을 배열과 페이징 처리를 위한 변수 선언
-        async function fetchAllChildBlocks(
-            id: string,
-        ): Promise<BlockObjectResponse[]> {
+        async function fetchAllChildBlocks(id: string): Promise<BlockObjectResponse[]> {
             const blocks: BlockObjectResponse[] = [];
             let hasMore = true;
             let cursor: string | undefined = undefined;
@@ -284,20 +274,11 @@ export async function getPostContent(blockId: string): Promise<string> {
                         const childBlocks = await fetchAllChildBlocks(block.id);
 
                         // Extended 인터페이스 가드를 통해 안전하게 자식 데이터 주입
-                        const extendedBlock =
-                            block as ExtendedBlockObjectResponse;
-                        if (
-                            extendedBlock.type === 'bulleted_list_item' &&
-                            extendedBlock.bulleted_list_item
-                        ) {
-                            extendedBlock.bulleted_list_item.children =
-                                childBlocks;
-                        } else if (
-                            extendedBlock.type === 'numbered_list_item' &&
-                            extendedBlock.numbered_list_item
-                        ) {
-                            extendedBlock.numbered_list_item.children =
-                                childBlocks;
+                        const extendedBlock = block as ExtendedBlockObjectResponse;
+                        if (extendedBlock.type === 'bulleted_list_item' && extendedBlock.bulleted_list_item) {
+                            extendedBlock.bulleted_list_item.children = childBlocks;
+                        } else if (extendedBlock.type === 'numbered_list_item' && extendedBlock.numbered_list_item) {
+                            extendedBlock.numbered_list_item.children = childBlocks;
                         }
                     } catch (e) {
                         console.warn(`자식 블록 로드 실패 (${block.id}):`, e);
@@ -320,36 +301,28 @@ export async function getPostContent(blockId: string): Promise<string> {
                 switch (type) {
                     case 'heading_1': {
                         if (typedBlock.type !== 'heading_1') continue;
-                        const text = typedBlock.heading_1.rich_text
-                            .map((t) => t.plain_text)
-                            .join('');
+                        const text = typedBlock.heading_1.rich_text.map((t) => t.plain_text).join('');
                         html += `<h1 class="text-3xl font-bold my-6 text-slate-900 dark:text-slate-50">${text}</h1>`;
                         break;
                     }
 
                     case 'heading_2': {
                         if (typedBlock.type !== 'heading_2') continue;
-                        const text = typedBlock.heading_2.rich_text
-                            .map((t) => t.plain_text)
-                            .join('');
+                        const text = typedBlock.heading_2.rich_text.map((t) => t.plain_text).join('');
                         html += `<h2 class="text-2xl font-bold mt-8 mb-4 text-slate-800 dark:text-slate-100 block" style="display: block !important; visibility: visible !important;">${text}</h2>`;
                         break;
                     }
 
                     case 'heading_3': {
                         if (typedBlock.type !== 'heading_3') continue;
-                        const text = typedBlock.heading_3.rich_text
-                            .map((t) => t.plain_text)
-                            .join('');
+                        const text = typedBlock.heading_3.rich_text.map((t) => t.plain_text).join('');
                         html += `<h3 class="text-xl font-bold mt-6 mb-3 text-slate-800 dark:text-slate-200 block" style="display: block !important; visibility: visible !important;">${text}</h3>`;
                         break;
                     }
 
                     case 'paragraph': {
                         if (typedBlock.type !== 'paragraph') continue;
-                        const text = typedBlock.paragraph.rich_text
-                            .map((t) => t.plain_text)
-                            .join('');
+                        const text = typedBlock.paragraph.rich_text.map((t) => t.plain_text).join('');
                         if (text.trim() !== '') {
                             html += `<p class="my-3 text-slate-700 dark:text-slate-300 leading-relaxed">${text}</p>`;
                         }
@@ -358,9 +331,7 @@ export async function getPostContent(blockId: string): Promise<string> {
 
                     case 'bulleted_list_item': {
                         if (typedBlock.type !== 'bulleted_list_item') continue;
-                        const text = typedBlock.bulleted_list_item.rich_text
-                            .map((t) => t.plain_text)
-                            .join('');
+                        const text = typedBlock.bulleted_list_item.rich_text.map((t) => t.plain_text).join('');
                         html += `<li class="ml-4 list-disc text-slate-700 dark:text-slate-300 my-1">${text}`;
 
                         if (typedBlock.bulleted_list_item.children) {
@@ -372,9 +343,7 @@ export async function getPostContent(blockId: string): Promise<string> {
 
                     case 'numbered_list_item': {
                         if (typedBlock.type !== 'numbered_list_item') continue;
-                        const text = typedBlock.numbered_list_item.rich_text
-                            .map((t) => t.plain_text)
-                            .join('');
+                        const text = typedBlock.numbered_list_item.rich_text.map((t) => t.plain_text).join('');
                         html += `<li class="ml-4 list-decimal text-slate-700 dark:text-slate-300 my-1">${text}`;
 
                         if (typedBlock.numbered_list_item.children) {
@@ -424,11 +393,27 @@ export async function getPostContent(blockId: string): Promise<string> {
                         break;
                     }
 
+                    case 'code': {
+                        if (typedBlock.type !== 'code') continue;
+
+                        const code = typedBlock.code.rich_text.map((t) => t.plain_text).join('');
+                        const language = typedBlock.code.language || 'plain text';
+
+                        html += `
+    <div class="my-6 overflow-hidden rounded-2xl border border-slate-200 bg-slate-950 dark:border-slate-800">
+      <div class="border-b border-slate-800 px-4 py-2 text-xs text-slate-400">
+        ${language}
+      </div>
+      <pre class="overflow-x-auto p-4 text-sm leading-relaxed text-slate-100"><code>${escapeHtml(code)}</code></pre>
+    </div>
+  `;
+                        break;
+                    }
+
                     default: {
                         // 🎯 [수정] default 문 안에 남아있던 가짜 any 객체 서치 로직을 완전 삭제하고
                         // unknown 타입캐스팅을 이용해 안전하게 자식 요소를 재귀 렌더링하도록 변경
-                        const fallbackBlock =
-                            block as ExtendedBlockObjectResponse;
+                        const fallbackBlock = block as ExtendedBlockObjectResponse;
                         const blockInternalData = fallbackBlock[type];
 
                         if (
@@ -441,10 +426,7 @@ export async function getPostContent(blockId: string): Promise<string> {
                                     children?: BlockObjectResponse[];
                                 }
                             ).children;
-                            if (
-                                nestedChildren &&
-                                Array.isArray(nestedChildren)
-                            ) {
+                            if (nestedChildren && Array.isArray(nestedChildren)) {
                                 html += renderBlocksToHtml(nestedChildren);
                             }
                         }
@@ -478,15 +460,14 @@ export function formatDate(dateString: string): string {
 export async function getAllCategories(): Promise<string[]> {
     if (!DATA_SOURCE_ID) return ['전체'];
     try {
-        const response: QueryDataSourceResponse =
-            await notion.dataSources.query({
-                data_source_id: DATA_SOURCE_ID,
-                page_size: 100,
-                filter: {
-                    property: 'Published',
-                    checkbox: { equals: true },
-                },
-            });
+        const response: QueryDataSourceResponse = await notion.dataSources.query({
+            data_source_id: DATA_SOURCE_ID,
+            page_size: 100,
+            filter: {
+                property: 'Published',
+                checkbox: { equals: true },
+            },
+        });
 
         const categoriesSet = new Set<string>();
         categoriesSet.add('전체'); // 기본값으로 '전체'는 무조건 포함
@@ -508,4 +489,13 @@ export async function getAllCategories(): Promise<string[]> {
         console.error('카테고리 목록을 가져오는 중 에러:', error);
         return ['전체'];
     }
+}
+
+function escapeHtml(text: string): string {
+    return text
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
 }
