@@ -2,10 +2,10 @@
 
 import { useEffect } from 'react';
 
-interface AdSenseInArticleProps {
-    client: string;
-    slot: string;
-}
+// 🎯 고유값 고정 (지근영 님의 애드센스 정보)
+const ADSENSE_CLIENT = 'ca-pub-3527850742207812';
+// FIXME: 나중에 심사 승인이 나면 발급받은 실제 10자리 광고 슬롯 번호로 변경하세요!
+const ADSENSE_SLOT = '1234567890';
 
 interface AdsByGooglePush {
     (obj: Record<string, never>): void;
@@ -17,10 +17,7 @@ declare global {
     }
 }
 
-export default function AdSenseInArticle({
-    client,
-    slot,
-}: AdSenseInArticleProps) {
+export default function AdSenseInArticle() {
     useEffect(() => {
         try {
             if (typeof window !== 'undefined' && window.adsbygoogle) {
@@ -39,8 +36,8 @@ export default function AdSenseInArticle({
                 style={{ display: 'block' }}
                 data-ad-layout="in-article"
                 data-ad-format="fluid"
-                data-ad-client={client}
-                data-ad-slot={slot}
+                data-ad-client={ADSENSE_CLIENT}
+                data-ad-slot={ADSENSE_SLOT}
             />
         </div>
     );
