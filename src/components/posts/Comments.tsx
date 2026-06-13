@@ -1,68 +1,36 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import Giscus from '@giscus/react';
 import { useTheme } from 'next-themes';
 
 export default function Comments() {
-    const commentRef = useRef<HTMLDivElement>(null);
-    const { theme, resolvedTheme } = useTheme();
-    const [isMounted, setIsMounted] = useState(false);
+    const { resolvedTheme } = useTheme();
 
-    // 1. 하이드레이션 에러 방지를 위한 마운트 체크
-    useEffect(() => {
-        requestAnimationFrame(() => {
-            setIsMounted(true);
-        });
-    }, []);
+    const giscusTheme = resolvedTheme === 'dark' ? 'dark_dimmed' : 'light';
 
-    // 마운트 완료 시 Giscus 스크립트 로드
-    useEffect(() => {
-        if (!isMounted || !commentRef.current) return;
-
-        // 기존에 렌더링된 Giscus iframe이나 script 찌꺼기를 제거
-        commentRef.current.innerHTML = '';
-
-        const script = document.createElement('script');
-        script.src = 'https://giscus.app/client.js';
-        script.async = true;
-        script.crossOrigin = 'anonymous';
-
-        // GitHub 리포지토리 고유 정보
-        script.setAttribute('data-repo', 'codes-gy/dev-blog');
-        script.setAttribute('data-repo-id', 'R_kgDOS4W40w');
-        script.setAttribute('data-category', 'General');
-        script.setAttribute('data-category-id', 'DIC_kwDOS4W4084C_CtX');
-
-        // 포스트별 독립된 댓글 공간 식별 설정
-        script.setAttribute('data-mapping', 'pathname');
-        script.setAttribute('data-strict', '0');
-        script.setAttribute('data-reactions-enabled', '1');
-        script.setAttribute('data-emit-metadata', '0');
-        script.setAttribute('data-input-position', 'bottom');
-        script.setAttribute('data-lang', 'ko');
-
-        const currentTheme = resolvedTheme || theme || 'light';
-        script.setAttribute('data-theme', currentTheme === 'dark' ? 'dark_dimmed' : 'light');
-
-        commentRef.current.appendChild(script);
-
-        // 컴포넌트 언마운트 시 스크립트 실행 노드 제거
-        return () => {
-            if (commentRef.current) {
-                // eslint-disable-next-line react-hooks/exhaustive-deps
-                commentRef.current.innerHTML = '';
-            }
-        };
-    }, [theme, resolvedTheme, isMounted]);
-
-    if (!isMounted) {
-        return <div className="mt-12 min-h-[300px]" />;
-    }
+    const NEXT_PUBLIC_GISCUS_REPO = process.env.NEXT_PUBLIC_GISCUS_REPO as `${string}/${string}`;
+    const NEXT_PUBLIC_GISCUS_REPO_ID = process.env.NEXT_PUBLIC_GISCUS_REPO_ID as string;
+    const NEXT_PUBLIC_GISCUS_CATEGORY = process.env.NEXT_PUBLIC_GISCUS_REPO_ID as string;
+    const NEXT_PUBLIC_GISCUS_CATEGORY_ID = process.env.NEXT_PUBLIC_GISCUS_REPO_ID as string;
 
     return (
         <section className="mt-12 w-full border-t border-slate-200 pt-10 dark:border-slate-800">
             <h2 className="mb-6 text-xl font-bold text-slate-950 dark:text-slate-50">💬 댓글 나누기</h2>
-            <div ref={commentRef} className="min-h-[300px]" />
+
+            <Giscus
+                repo={NEXT_PUBLIC_GISCUS_REPO}
+                repoId={NEXT_PUBLIC_GISCUS_REPO_ID}
+                category={NEXT_PUBLIC_GISCUS_CATEGORY}
+                categoryId={NEXT_PUBLIC_GISCUS_CATEGORY_ID}
+                mapping="pathname"
+                strict="0"
+                reactionsEnabled="1"
+                emitMetadata="0"
+                inputPosition="bottom"
+                theme={giscusTheme}
+                lang="ko"
+                loading="lazy"
+            />
         </section>
     );
 }
