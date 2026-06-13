@@ -10,8 +10,8 @@ export default function Comments() {
 
     const NEXT_PUBLIC_GISCUS_REPO = process.env.NEXT_PUBLIC_GISCUS_REPO as `${string}/${string}`;
     const NEXT_PUBLIC_GISCUS_REPO_ID = process.env.NEXT_PUBLIC_GISCUS_REPO_ID as string;
-    const NEXT_PUBLIC_GISCUS_CATEGORY = process.env.NEXT_PUBLIC_GISCUS_REPO_ID as string;
-    const NEXT_PUBLIC_GISCUS_CATEGORY_ID = process.env.NEXT_PUBLIC_GISCUS_REPO_ID as string;
+    const NEXT_PUBLIC_GISCUS_CATEGORY = process.env.NEXT_PUBLIC_GISCUS_CATEGORY as string;
+    const NEXT_PUBLIC_GISCUS_CATEGORY_ID = process.env.NEXT_PUBLIC_GISCUS_CATEGORY_ID as string;
 
     return (
         <section className="mt-12 w-full border-t border-slate-200 pt-10 dark:border-slate-800">
