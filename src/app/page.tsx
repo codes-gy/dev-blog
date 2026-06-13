@@ -15,10 +15,8 @@ export default async function BlogHomePage() {
     return (
         <div className="mx-auto min-h-screen max-w-5xl bg-slate-50 px-6 py-12 duration-200 dark:bg-slate-950">
             <NotionLiveRefresh />
-
             {/* 상단 타이틀 브랜드 헤더 */}
             <HeroHeader />
-
             {/* 대형 프로필 & 자기소개 섹션 */}
             <Profile />
             {/* 주요 프로젝트 섹션 */}
