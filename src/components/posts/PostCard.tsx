@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { Link } from '@/src/navigation';
 
 interface Post {
     id: string;
@@ -15,9 +15,10 @@ interface PostCardProps {
 }
 
 export default function PostCard({ post }: PostCardProps) {
+    const pureSlug = post.slug.includes('/') ? post.slug.split('/').pop() : post.slug;
     return (
         <Link
-            href={`/posts/${post.slug}`}
+            href={`/posts/${pureSlug}`}
             key={post.id}
             className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-300 bg-white shadow-sm transition-all duration-200 hover:border-blue-500 hover:shadow-md dark:border-slate-700 dark:bg-slate-900 dark:shadow-black/40 dark:hover:border-blue-400"
         >
@@ -42,9 +43,7 @@ export default function PostCard({ post }: PostCardProps) {
             {/* 카드 하단: 텍스트 정보 구역 */}
             <div className="p-6">
                 {/* 날짜 표시 */}
-                <span className="text-xs font-medium text-slate-700 dark:text-slate-200">
-                    {post.publishedAt}
-                </span>
+                <span className="text-xs font-medium text-slate-700 dark:text-slate-200">{post.publishedAt}</span>
 
                 {/* 글 제목 */}
                 {/* group-hover:text-blue-600: 마우스를 올리면 글자색이 세련된 파란색으로 변경됨 */}
@@ -60,10 +59,7 @@ export default function PostCard({ post }: PostCardProps) {
 
                 {/* 읽기 버튼 디자인 */}
                 <div className="mt-4 flex items-center border-t border-slate-400 pt-4 text-sm font-semibold text-blue-500 dark:border-slate-700">
-                    더 읽어보기{' '}
-                    <span className="ml-1 transition-transform group-hover:translate-x-1">
-                        →
-                    </span>
+                    더 읽어보기 <span className="ml-1 transition-transform group-hover:translate-x-1">→</span>
                 </div>
             </div>
         </Link>

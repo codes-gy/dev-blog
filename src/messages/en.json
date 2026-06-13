@@ -1,0 +1,96 @@
+{
+    "Metadata": {
+        "title": "DevLog.io | Software Engineer Tech Blog",
+        "description": "A development tech blog built with Next.js.",
+        "notFound": "Post Not Found",
+        "notFoundDescription": "The requested post could not be found or the link may have been deleted."
+    },
+    "Navigation": {
+        "home": "Home",
+        "about": "About",
+        "posts": "Posts"
+    },
+    "Home": {
+        "title": "Beyond just writing code, pondering the 'why'",
+        "description": "A space to document experiences and grow together.",
+        "recentPosts": "🌳 Recent Posts",
+        "latestPosts": "Latest Posts",
+        "viewAll": "View All Posts →",
+        "noPosts": "No posts have been published yet.",
+        "featuredProjects": "✨ Featured Projects",
+        "featuredProjectsSub": "List of major projects",
+        "coreCapabilities": "💡 Core Capabilities",
+        "experienceTimeline": "💼 Experience & Timeline"
+    },
+    "Profile": {
+        "name": "Geunyeong Ji",
+        "role": "Full-Stack Developer",
+        "title": "Solving complex problems with simple and robust code.",
+        "description": "Hello! I am a full-stack developer passionate about user experience (UX) optimization and stable infrastructure design. Rather than settling for just making functional features, I strive to understand the internal mechanics of frameworks and think deeply about architectures that maximize business value. I share refined insights and newly acquired knowledge through this tech blog."
+    },
+    "Projects": {
+        "states": {
+            "Live": "Live",
+            "Completed": "Completed",
+            "InProgress": "In Progress"
+        },
+        "project1": {
+            "title": "Notion-Based Real-Time Web CMS Blog",
+            "description": "An ultra-lightweight blog that combines Next.js App Router, Notion API, and SSE webhooks to instantly refresh the screen whenever data is updated.",
+            "techStack": "Next.js, TypeScript, TailwindCSS, SSE",
+            "state": "Live"
+        },
+        "project2": {
+            "title": "AI-Powered Schedule Planner",
+            "description": "A web application where natural language inputs are analyzed by a large language model to automatically parse and arrange schedules onto a timeline.",
+            "techStack": "React, Node.js, OpenAI API, PostgreSQL",
+            "state": "Completed"
+        },
+        "project3": {
+            "title": "AI-Powered Schedule Planner",
+            "description": "A web application where natural language inputs are analyzed by a large language model to automatically parse and arrange schedules onto a timeline.",
+            "techStack": "React, Node.js, OpenAI API, PostgreSQL",
+            "state": "Completed"
+        },
+        "project4": {
+            "title": "AI-Powered Schedule Planner",
+            "description": "A web application where natural language inputs are analyzed by a large language model to automatically parse and arrange schedules onto a timeline.",
+            "techStack": "React, Node.js, OpenAI API, PostgreSQL",
+            "state": "InProgress"
+        }
+    },
+    "Capabilities": {
+        "item1": "Web service architecture design based on Next.js / React",
+        "item2": "Maintaining type safety and high-quality code utilizing TypeScript",
+        "item3": "Designing RESTful APIs and scalable database modeling",
+        "item4": "Building CI/CD pipelines and deploying to Vercel/AWS infrastructure"
+    },
+    "Timeline": {
+        "event1": "Completed Codeit Bootcamp",
+        "date1": "Oct 2025 ~ Jun 2026",
+        "event2": "Participated in Open Source Contribution Open Lab",
+        "date2": "Mar 2024 ~ Jun 2024"
+    },
+    "Post": {
+        "views": "{count} people have read this article.",
+        "likes": "{count} Likes",
+        "readingTime": "Estimated reading time: {time} min",
+        "backToList": "Back to List",
+        "likePrompt": "If you found this article helpful, please leave a like!",
+        "readMore": "Read More",
+        "postClose": "Close",
+        "zoomedImageAlt": "Zoomed post image"
+    },
+    "Comments": {
+        "title": "💬 Comments"
+    },
+    "Error": {
+        "message": "An error occurred while fetching the data.",
+        "retry": "Retry",
+        "notFound": "The page you are looking for could not be found.",
+        "goHome": "Go Back Home"
+    },
+    "Footer": {
+        "copyright": "© All content on this blog is protected by copyright law. Unauthorized reproduction and distribution are prohibited."
+    }
+}

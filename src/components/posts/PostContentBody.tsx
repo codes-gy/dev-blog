@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useTranslations } from 'use-intl';
 
 interface PostContentBodyProps {
     contentHtml: string;
@@ -11,7 +12,7 @@ export default function PostContentBody({ contentHtml }: PostContentBodyProps) {
     const [images, setImages] = useState<string[]>([]);
     // -1은 모달이 닫힌 상태, 0 이상은 열린 상태(현재 이미지의 방 번호)를 뜻합니다.
     const [currentIndex, setCurrentIndex] = useState<number>(-1);
-
+    const tPost = useTranslations('Post');
     useEffect(() => {
         if (!containerRef.current) return;
         const imgElements = containerRef.current.querySelectorAll('img');
@@ -66,10 +67,7 @@ export default function PostContentBody({ contentHtml }: PostContentBodyProps) {
             {currentIndex !== -1 && images.length > 0 && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
                     {/* 투명 배경 클릭 시 닫기 */}
-                    <div
-                        className="absolute inset-0 cursor-zoom-out"
-                        onClick={() => setCurrentIndex(-1)}
-                    />
+                    <div className="absolute inset-0 cursor-zoom-out" onClick={() => setCurrentIndex(-1)} />
 
                     <div className="relative z-10 flex max-h-[90vh] max-w-[90vw] items-center justify-center">
                         {/* 닫기 버튼 */}
@@ -77,7 +75,7 @@ export default function PostContentBody({ contentHtml }: PostContentBodyProps) {
                             className="absolute -top-12 right-0 text-lg font-bold text-white hover:text-slate-300"
                             onClick={() => setCurrentIndex(-1)}
                         >
-                            닫기 ✕
+                            {tPost('postClose')} ✕
                         </button>
 
                         {/* ⬅️ 왼쪽 버튼 (이미지가 여러 개일 때만 표시) */}
@@ -91,13 +89,14 @@ export default function PostContentBody({ contentHtml }: PostContentBodyProps) {
                         )}
 
                         {/* 현재 인덱스의 이미지 노출 */}
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                             src={images[currentIndex]}
                             alt={`확대 이미지 ${currentIndex + 1}`}
                             className="mx-auto max-h-[80vh] max-w-full rounded-lg object-contain shadow-2xl select-none"
                         />
 
-                        {/* ➡️ 오른쪽 버튼 */}
+                        {/* 오른쪽 버튼 */}
                         {images.length > 1 && (
                             <button
                                 onClick={handleNext}

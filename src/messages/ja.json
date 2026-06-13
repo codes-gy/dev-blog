@@ -1,0 +1,96 @@
+{
+    "Metadata": {
+        "title": "DevLog.io | 開発者技術ブログ",
+        "description": "Next.jsで構築した開発・技術ブログです。",
+        "notFound": "記事が見つかりません",
+        "notFoundDescription": "要求された記事が見つからないか、削除された可能性があります。"
+    },
+    "Navigation": {
+        "home": "ホーム",
+        "about": "紹介",
+        "posts": "記事一覧"
+    },
+    "Home": {
+        "title": "単にコードを書くだけでなく、その「理由」を考え、",
+        "description": "経験を記録しながら、共に成長していく空間です。",
+        "recentPosts": "🌳 最近の投稿",
+        "latestPosts": "最新記事",
+        "viewAll": "すべての記事を見る →",
+        "noPosts": "まだ公開された記事がありません。",
+        "featuredProjects": "✨ 主要プロジェクト",
+        "featuredProjectsSub": "主要プロジェクト一覧",
+        "coreCapabilities": "💡 コアスキル",
+        "experienceTimeline": "💼 経歴＆タイムライン"
+    },
+    "Profile": {
+        "name": "池 根領 (チ・グニョン)",
+        "role": "フルスタックエンジニア",
+        "title": "複雑な問題を、シンプルで堅牢なコードで解決します。",
+        "description": "はじめまして！ユーザー体験（UX）の最適化と、安定したインフラ設計に関心があるフルスタック開発者です。単に動作する機能を作るだけでなく、フレームワークの内部動作原理を理解し、ビジネス価値を最大化できるアーキテクチャを常に模索しています。技術ブログを通じて、新しく得た知見を精査して共有しています。"
+    },
+    "Projects": {
+        "states": {
+            "Live": "運用中",
+            "Completed": "完了",
+            "InProgress": "進行中"
+        },
+        "project1": {
+            "title": "NotionベースのリアルタイムWeb CMSブログ",
+            "description": "Next.js App Router、Notion API、SSE（Server-Sent Events）ウェブフックを組み合わせ、データ更新時に画面がリアルタイムでリフレッシュされる超軽量ブログです。",
+            "techStack": "Next.js, TypeScript, TailwindCSS, SSE",
+            "state": "Live"
+        },
+        "project2": {
+            "title": "AIベースのスケジュール管理ツール",
+            "description": "自然言語で予定を入力すると、大規模言語モデル（LLM）が文脈を分析し、タイムラインに自動で予定をパース・整列してくれるWebアプリケーションです。",
+            "techStack": "React, Node.js, OpenAI API, PostgreSQL",
+            "state": "Completed"
+        },
+        "project3": {
+            "title": "AIベースのスケジュール管理ツール",
+            "description": "自然言語で予定を入力すると、大規模言語モデル（LLM）が文脈を分析し、タイムラインに自動で予定をパース・整列してくれるWebアプリケーションです。",
+            "techStack": "React, Node.js, OpenAI API, PostgreSQL",
+            "state": "Completed"
+        },
+        "project4": {
+            "title": "AIベースのスケジュール管理ツール",
+            "description": "自然言語で予定を入力すると、大規模言語モデル（LLM）が文脈を分析し、タイムラインに自動で予定をパース・整列してくれるWebアプリケーションです。",
+            "techStack": "React, Node.js, OpenAI API, PostgreSQL",
+            "state": "InProgress"
+        }
+    },
+    "Capabilities": {
+        "item1": "Next.js / ReactベースのWebサービスアーキテクチャ設計",
+        "item2": "TypeScriptを活用した型安全性および高品質なコードの維持",
+        "item3": "RESTful APIおよび拡張性のあるデータモデリング",
+        "item4": "CI/CDパイプラインの構築およびVercel/AWSインフラへのデプロイ"
+    },
+    "Timeline": {
+        "event1": "Codeit ブートキャンプ 修了",
+        "date1": "2025.10 ~ 2026.06",
+        "event2": "オープンソースコントリビューション オープンラボ 参加",
+        "date2": "2024.03 ~ 2024.06"
+    },
+    "Post": {
+        "views": "この記事は {count} 人に読まれました。",
+        "likes": "いいね {count} 個",
+        "readingTime": "所要時間 約 {time} 分",
+        "backToList": "一覧に戻る",
+        "likePrompt": "この記事が役に立ちましたら、ぜひ「いいね」をお願いします！",
+        "readMore": "続きを読む",
+        "postClose": "閉じる",
+        "zoomedImageAlt": "拡大された本文画像"
+    },
+    "Comments": {
+        "title": "💬 コメントを残す"
+    },
+    "Error": {
+        "message": "データの読み込み中に問題が発生しました。",
+        "retry": "再試試する",
+        "notFound": "お探しのページが見つかりません。",
+        "goHome": "ホームに戻る"
+    },
+    "Footer": {
+        "copyright": "© 当ブログのすべてのコンテンツは著作権法により保護されています。無断転載および配布を禁じます。"
+    }
+}

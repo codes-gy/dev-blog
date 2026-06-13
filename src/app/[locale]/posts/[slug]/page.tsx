@@ -1,6 +1,8 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
+import { useTranslations } from 'use-intl';
 import AdSenseInArticle from '@/src/components/posts/AdSenseInArticle';
 import Comments from '@/src/components/posts/Comments';
 import LikeButton from '@/src/components/posts/LikeButton';
@@ -12,6 +14,7 @@ import { prisma } from '@/src/lib/prisma';
 interface PostPageProps {
     params: Promise<{
         slug: string;
+        locale: string;
     }>;
 }
 export const dynamic = 'force-dynamic';
@@ -75,12 +78,14 @@ function getCloudinaryCoverUrl(imageUrl: string | null | undefined): string {
 }
 
 export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
-    const { slug } = await params;
+    const { slug, locale } = await params;
     const post = await getBlogPost(slug);
+    const tMeta = await getTranslations({ locale, namespace: 'Metadata' });
+
     if (!post) {
         return {
-            title: '글을 찾을 수 없습니다 | DevLog',
-            description: '요청하신 게시글을 찾을 수 없거나 삭제된 링크입니다.',
+            title: tMeta('notFound'),
+            description: tMeta('notFoundDescription'),
         };
     }
     const pageTitle = `${post.title} | DevLog`;
@@ -114,7 +119,7 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
 
 export default async function PostDetailPage({ params }: PostPageProps) {
     // 1. 안전하게 비동기 params 구조를 풀어 slug를 가져옵니다.
-    const { slug } = await params;
+    const { slug, locale } = await params;
     const post = await getBlogPost(slug);
     if (!post) notFound();
     const content = await getPostContent(post.id);
@@ -128,6 +133,8 @@ export default async function PostDetailPage({ params }: PostPageProps) {
 
     const initialViews = data?.views ?? 0;
     const initialLikes = data?.likes ?? 0;
+
+    const tPost = await getTranslations({ locale, namespace: 'Post' });
 
     return (
         <main className="mx-auto min-h-screen max-w-6xl bg-white px-6 py-16 duration-200 dark:bg-slate-950">
@@ -177,7 +184,7 @@ export default async function PostDetailPage({ params }: PostPageProps) {
             {/* 좋아요 섹션 */}
             <div className="mt-12 flex flex-col items-center justify-center gap-3 border-t border-slate-100 pt-10 dark:border-slate-800/60">
                 <p className="text-xs font-semibold tracking-wide text-slate-400 dark:text-slate-500">
-                    이 글이 유익했다면 좋아요를 남겨주세요!
+                    {tPost('likePrompt')}
                 </p>
                 <LikeButton slug={slug} initialLikes={initialLikes} />
             </div>

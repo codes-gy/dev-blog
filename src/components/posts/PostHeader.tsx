@@ -11,10 +11,7 @@ export default function PostHeader() {
                     그동안 공부하고 정리한 기술 아카이브입니다.
                 </p>
             </div>
-            <Link
-                href="/public"
-                className="text-sm font-semibold text-blue-600 hover:underline dark:text-blue-400"
-            >
+            <Link href="/public" className="text-sm font-semibold text-blue-600 hover:underline dark:text-blue-400">
                 ← 홈으로
             </Link>
         </header>
