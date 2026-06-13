@@ -3,7 +3,11 @@
 import Giscus from '@giscus/react';
 import { useTheme } from 'next-themes';
 
-export default function Comments() {
+interface CommentsProps {
+    postSlug: string;
+}
+
+export default function Comments({ postSlug }: CommentsProps) {
     const { resolvedTheme } = useTheme();
 
     const giscusTheme = resolvedTheme === 'dark' ? 'dark_dimmed' : 'light';
@@ -22,8 +26,9 @@ export default function Comments() {
                 repoId={NEXT_PUBLIC_GISCUS_REPO_ID}
                 category={NEXT_PUBLIC_GISCUS_CATEGORY}
                 categoryId={NEXT_PUBLIC_GISCUS_CATEGORY_ID}
-                mapping="pathname"
-                strict="0"
+                mapping="specific"
+                term={postSlug}
+                strict="1"
                 reactionsEnabled="1"
                 emitMetadata="0"
                 inputPosition="bottom"

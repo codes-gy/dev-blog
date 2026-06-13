@@ -183,7 +183,7 @@ export default async function PostDetailPage({ params }: PostPageProps) {
             </div>
 
             {/* 댓글 섹션 */}
-            <Comments />
+            <Comments postSlug={slug} />
         </main>
     );
 }

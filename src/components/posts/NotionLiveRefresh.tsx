@@ -16,7 +16,7 @@ export default function NotionLiveRefresh() {
         };
 
         return () => {
-            eventSource.close(); // 페이지를 나가면 연결을 안전하게 끊습니다.
+            eventSource.close(); // 페이지를 나가면 연결 끊음.
         };
     }, [router]);
 
