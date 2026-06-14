@@ -5,6 +5,7 @@ import AdSenseInArticle from '@/src/components/posts/AdSenseInArticle';
 import Comments from '@/src/components/posts/Comments';
 import LikeButton from '@/src/components/posts/LikeButton';
 import PostContentBody from '@/src/components/posts/PostContentBody';
+import ShareButtons from '@/src/components/posts/ShareButtons';
 import ViewCounter from '@/src/components/posts/ViewCounter';
 import { getBlogPost, getPostContent } from '@/src/lib/data';
 import { prisma } from '@/src/lib/prisma';
@@ -173,6 +174,16 @@ export default async function PostDetailPage({ params }: PostPageProps) {
                 - slot 값은 나중에 광고가 승인된 후 애드센스 대시보드에서 '신규 광고 단위 생성'을 통해 생성된 10자리 숫자를 넣어주시면 됩니다. 우선은 아무 임의 숫자나 비워두셔도 심사용으로는 문제 없습니다.
             */}
             <AdSenseInArticle />
+
+            {/* 🌟 [추가] 소셜 공유 버튼 섹션 배치 */}
+            <div className="mt-10 hidden border-b border-slate-100 pb-8 dark:border-slate-800/60">
+                <ShareButtons
+                    slug={slug}
+                    title={post.title}
+                    description={post.description || ''}
+                    coverImage={coverImageUrl}
+                />
+            </div>
 
             {/* 좋아요 섹션 */}
             <div className="mt-12 flex flex-col items-center justify-center gap-3 border-t border-slate-100 pt-10 dark:border-slate-800/60">
