@@ -5,6 +5,7 @@ import type {
     QueryDataSourceResponse,
 } from '@notionhq/client/build/src/api-endpoints';
 import 'server-only';
+import { createHighlighter } from 'shiki';
 
 export const dynamic = 'force-dynamic';
 
@@ -31,6 +32,10 @@ const DATA_SOURCE_ID = process.env.NOTION_DATA_SOURCE_ID;
 
 type PageProperty = PageObjectResponse['properties'][string];
 type RichTextItem = { plain_text: string };
+
+type NotionRichTextProperty = Extract<PageProperty, { rich_text: unknown }>;
+type NotionRichTextItem = NotionRichTextProperty['rich_text'][number];
+
 type NotionBlockWithText =
     | { type: 'heading_1'; heading_1: { rich_text: RichTextItem[] } }
     | { type: 'heading_2'; heading_2: { rich_text: RichTextItem[] } }
@@ -56,7 +61,87 @@ type NotionBlockWithText =
               rich_text: RichTextItem[];
               children?: BlockObjectResponse[];
           };
+      }
+    | {
+          type: 'callout';
+          callout: {
+              rich_text: RichTextItem[];
+              icon?:
+                  | { type: 'emoji'; emoji: string }
+                  | { type: 'external'; external: { url: string } }
+                  | {
+                        type: 'file';
+                        file: { url: string };
+                    }
+                  | null;
+              color: string;
+              children?: BlockObjectResponse[];
+          };
+      }
+    | {
+          type: 'table';
+          table: {
+              children?: BlockObjectResponse[];
+          };
+      }
+    | {
+          type: 'table_row';
+          table_row: {
+              cells: RichTextItem[][];
+          };
+      }
+    | {
+          type: 'quote';
+          quote: {
+              rich_text: RichTextItem[];
+          };
       };
+const NOTION_BG_STYLES: Record<string, { light: string; dark: string }> = {
+    gray_background: {
+        light: 'background-color: #f1f1ef; color: #37352f;',
+        dark: 'background-color: rgba(255, 255, 255, 0.05); color: #e3e3e3;',
+    },
+    brown_background: {
+        light: 'background-color: #f4eee1; color: #442a1e;',
+        dark: 'background-color: rgba(140, 74, 44, 0.15); color: #f3d6c6;',
+    },
+    orange_background: {
+        light: 'background-color: #fbecdd; color: #49290e;',
+        dark: 'background-color: rgba(217, 115, 13, 0.15); color: #fad0a8;',
+    },
+    yellow_background: {
+        light: 'background-color: #fbf3db; color: #40320d;',
+        dark: 'background-color: rgba(223, 171, 1, 0.15); color: #fbeea4;',
+    },
+    green_background: {
+        light: 'background-color: #edf3ec; color: #1d3829;',
+        dark: 'background-color: rgba(11, 110, 79, 0.15); color: #bdecda;',
+    },
+    blue_background: {
+        light: 'background-color: #e8f4fc; color: #0b2a4a;',
+        dark: 'background-color: rgba(0, 122, 255, 0.15); color: #c6e2ff;',
+    },
+    purple_background: {
+        light: 'background-color: #f3edf8; color: #2b1440;',
+        dark: 'background-color: rgba(144, 59, 245, 0.15); color: #e8dbfc;',
+    },
+    pink_background: {
+        light: 'background-color: #f9edf2; color: #49162e;',
+        dark: 'background-color: rgba(193, 23, 112, 0.15); color: #f9dbec;',
+    },
+    red_background: {
+        light: 'background-color: #faecec; color: #4c1111;',
+        dark: 'background-color: rgba(224, 62, 62, 0.15); color: #fcdbdb;',
+    },
+    default: {
+        light: 'background-color: #f1f1ef; color: #37352f;',
+        dark: 'background-color: rgba(255, 255, 255, 0.05); color: #e3e3e3;',
+    },
+    default_background: {
+        light: 'background-color: #f1f1ef; color: #37352f;',
+        dark: 'background-color: rgba(255, 255, 255, 0.05); color: #e3e3e3;',
+    },
+};
 
 interface ExtendedBlockObjectResponse extends Omit<BlockObjectResponse, 'type'> {
     type: string;
@@ -248,7 +333,12 @@ export async function getBlogPost(slug: string): Promise<Post | null> {
 
 export async function getPostContent(blockId: string): Promise<string> {
     try {
-        // 1. 모든 블록을 담을 배열과 페이징 처리를 위한 변수 선언
+        const highlighter = await createHighlighter({
+            themes: ['github-light', 'github-dark-dimmed'],
+            langs: ['typescript', 'javascript', 'python', 'html', 'css', 'json', 'bash', 'markdown', 'tsx'],
+        });
+
+        // 모든 블록을 담을 배열과 페이징 처리를 위한 변수 선언
         async function fetchAllChildBlocks(id: string): Promise<BlockObjectResponse[]> {
             const blocks: BlockObjectResponse[] = [];
             let hasMore = true;
@@ -272,14 +362,13 @@ export async function getPostContent(blockId: string): Promise<string> {
                 if (block.has_children && block.type !== 'child_database') {
                     try {
                         const childBlocks = await fetchAllChildBlocks(block.id);
-
-                        // Extended 인터페이스 가드를 통해 안전하게 자식 데이터 주입
                         const extendedBlock = block as ExtendedBlockObjectResponse;
-                        if (extendedBlock.type === 'bulleted_list_item' && extendedBlock.bulleted_list_item) {
-                            extendedBlock.bulleted_list_item.children = childBlocks;
-                        } else if (extendedBlock.type === 'numbered_list_item' && extendedBlock.numbered_list_item) {
-                            extendedBlock.numbered_list_item.children = childBlocks;
+
+                        if (!extendedBlock[block.type]) {
+                            extendedBlock[block.type] = { children: [], rich_text: [] };
                         }
+                        const internalData = extendedBlock[block.type] as { children?: BlockObjectResponse[] };
+                        internalData.children = childBlocks;
                     } catch (e) {
                         console.warn(`자식 블록 로드 실패 (${block.id}):`, e);
                     }
@@ -290,49 +379,99 @@ export async function getPostContent(blockId: string): Promise<string> {
 
         const allBlocks = await fetchAllChildBlocks(blockId);
 
+        function renderRichText(richTextArray: NotionRichTextItem[]): string {
+            if (!richTextArray) return '';
+            return richTextArray
+                .map((t) => {
+                    let text = escapeHtml(t.plain_text);
+
+                    // 서식 적용
+                    if (t.annotations.bold) text = `<strong>${text}</strong>`;
+                    if (t.annotations.italic) text = `<em>${text}</em>`;
+                    if (t.annotations.strikethrough) text = `<del>${text}</del>`;
+                    if (t.annotations.underline) text = `<span class="underline">${text}</span>`;
+                    if (t.annotations.code) {
+                        text = `<code class="px-1.5 py-0.5 mx-0.5 rounded bg-slate-100 dark:bg-slate-800 text-rose-600 dark:text-rose-400 font-mono text-sm border border-slate-200 dark:border-slate-700">${text}</code>`;
+                    }
+
+                    // 링크 처리
+                    if (t.href) {
+                        text = `<a href="${t.href}" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 underline hover:text-blue-800">${text}</a>`;
+                    }
+
+                    return text;
+                })
+                .join('');
+        }
+
         // 자식 노드가 뚫려있는 블록 데이터를 다루기 위한 서브 렌더러 함수
         function renderBlocksToHtml(blocks: BlockObjectResponse[]): string {
             let html = '';
+            let isInsideList = false;
+            let currentListType: 'ul' | 'ol' | null = null;
+
+            const closeListIfNeeded = () => {
+                if (isInsideList && currentListType) {
+                    html += `</${currentListType}>`;
+                    isInsideList = false;
+                    currentListType = null;
+                }
+            };
 
             for (const block of blocks) {
                 const type = block.type;
                 const typedBlock = block as unknown as NotionBlockWithText;
 
+                if (type !== 'bulleted_list_item' && type !== 'numbered_list_item') {
+                    closeListIfNeeded();
+                }
+
                 switch (type) {
                     case 'heading_1': {
                         if (typedBlock.type !== 'heading_1') continue;
-                        const text = typedBlock.heading_1.rich_text.map((t) => t.plain_text).join('');
+                        const text = renderRichText(typedBlock.heading_1.rich_text as NotionRichTextItem[]);
                         html += `<h1 class="text-3xl font-bold my-6 text-slate-900 dark:text-slate-50">${text}</h1>`;
                         break;
                     }
 
                     case 'heading_2': {
                         if (typedBlock.type !== 'heading_2') continue;
-                        const text = typedBlock.heading_2.rich_text.map((t) => t.plain_text).join('');
-                        html += `<h2 class="text-2xl font-bold mt-8 mb-4 text-slate-800 dark:text-slate-100 block" style="display: block !important; visibility: visible !important;">${text}</h2>`;
+                        const text = renderRichText(typedBlock.heading_2.rich_text as NotionRichTextItem[]);
+                        html += `<h2 class="text-2xl font-bold mt-8 mb-4 text-slate-800 dark:text-slate-100 block" 
+                        style="display: block !important; visibility: visible !important;">
+                            ${text}
+                        </h2>`;
                         break;
                     }
 
                     case 'heading_3': {
                         if (typedBlock.type !== 'heading_3') continue;
-                        const text = typedBlock.heading_3.rich_text.map((t) => t.plain_text).join('');
+                        const text = renderRichText(typedBlock.heading_3.rich_text as NotionRichTextItem[]);
                         html += `<h3 class="text-xl font-bold mt-6 mb-3 text-slate-800 dark:text-slate-200 block" style="display: block !important; visibility: visible !important;">${text}</h3>`;
                         break;
                     }
 
                     case 'paragraph': {
                         if (typedBlock.type !== 'paragraph') continue;
-                        const text = typedBlock.paragraph.rich_text.map((t) => t.plain_text).join('');
+                        const text = renderRichText(typedBlock.paragraph.rich_text as NotionRichTextItem[]);
                         if (text.trim() !== '') {
-                            html += `<p class="my-3 text-slate-700 dark:text-slate-300 leading-relaxed">${text}</p>`;
+                            html += `<p class="my-4 text-base md:text-lg text-slate-700 dark:text-slate-300 leading-8">${text}</p>`;
                         }
                         break;
                     }
 
                     case 'bulleted_list_item': {
                         if (typedBlock.type !== 'bulleted_list_item') continue;
-                        const text = typedBlock.bulleted_list_item.rich_text.map((t) => t.plain_text).join('');
-                        html += `<li class="ml-4 list-disc text-slate-700 dark:text-slate-300 my-1">${text}`;
+
+                        if (!isInsideList || currentListType !== 'ul') {
+                            closeListIfNeeded();
+                            html +=
+                                '<ul class="list-disc pl-6 my-4 space-y-2 text-base md:text-lg text-slate-700 dark:text-slate-300 leading-8">';
+                            isInsideList = true;
+                            currentListType = 'ul';
+                        }
+                        const text = renderRichText(typedBlock.bulleted_list_item.rich_text as NotionRichTextItem[]);
+                        html += `<li class="text-slate-700 dark:text-slate-300 my-1">${text}`;
 
                         if (typedBlock.bulleted_list_item.children) {
                             html += `<ul class="ml-4">${renderBlocksToHtml(typedBlock.bulleted_list_item.children)}</ul>`;
@@ -343,8 +482,17 @@ export async function getPostContent(blockId: string): Promise<string> {
 
                     case 'numbered_list_item': {
                         if (typedBlock.type !== 'numbered_list_item') continue;
-                        const text = typedBlock.numbered_list_item.rich_text.map((t) => t.plain_text).join('');
-                        html += `<li class="ml-4 list-decimal text-slate-700 dark:text-slate-300 my-1">${text}`;
+
+                        if (!isInsideList || currentListType !== 'ol') {
+                            closeListIfNeeded();
+                            html +=
+                                '<ol class="list-decimal pl-6 my-4 space-y-2 text-base md:text-lg text-slate-700 dark:text-slate-300 leading-8">';
+                            isInsideList = true;
+                            currentListType = 'ol';
+                        }
+
+                        const text = renderRichText(typedBlock.numbered_list_item.rich_text as NotionRichTextItem[]);
+                        html += `<li class="text-slate-700 dark:text-slate-300 my-1">${text}`;
 
                         if (typedBlock.numbered_list_item.children) {
                             html += `<ol class="ml-4">${renderBlocksToHtml(typedBlock.numbered_list_item.children)}</ol>`;
@@ -396,23 +544,165 @@ export async function getPostContent(blockId: string): Promise<string> {
                     case 'code': {
                         if (typedBlock.type !== 'code') continue;
 
-                        const code = typedBlock.code.rich_text.map((t) => t.plain_text).join('');
-                        const language = typedBlock.code.language || 'plain text';
+                        const codeContent = typedBlock.code.rich_text.map((t) => t.plain_text).join('');
+                        let language = typedBlock.code.language || 'txt';
+
+                        if (language === 'c++') language = 'cpp';
+                        if (language === 'plain text') language = 'txt';
+
+                        let highlightedHtml = '';
+                        try {
+                            // 💡 단일 CSS 변수 대신 라이트/다크 듀얼 테마를 직접 지정합니다.
+                            highlightedHtml = highlighter.codeToHtml(codeContent, {
+                                lang: language,
+                                themes: {
+                                    light: 'github-light',
+                                    dark: 'github-dark-dimmed',
+                                },
+                            });
+                        } catch (err) {
+                            highlightedHtml = `<pre><code>${escapeHtml(codeContent)}</code></pre>`;
+                        }
 
                         html += `
-    <div class="my-6 overflow-hidden rounded-2xl border border-slate-200 bg-slate-950 dark:border-slate-800">
-      <div class="border-b border-slate-800 px-4 py-2 text-xs text-slate-400">
-        ${language}
-      </div>
-      <pre class="overflow-x-auto p-4 text-sm leading-relaxed text-slate-100"><code>${escapeHtml(code)}</code></pre>
+                            <div class="my-6 overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60">
+                              <div class="border-b border-slate-200 dark:border-slate-800 px-4 py-2 text-xs font-mono text-slate-400 dark:text-slate-500 bg-slate-100/50 dark:bg-slate-900/80 flex justify-between items-center select-none">
+                                <span>${language.toUpperCase()}</span>
+                              </div>
+                              <div class="shiki-wrapper p-4 overflow-x-auto text-sm leading-relaxed">
+                                ${highlightedHtml}
+                              </div>
+                            </div>
+                        `;
+                        break;
+                    }
+                    case 'callout': {
+                        if (typedBlock.type !== 'callout') continue;
+
+                        const calloutData = typedBlock.callout;
+
+                        // 1. 텍스트 내 서식 복원
+                        const text = renderRichText(calloutData.rich_text as NotionRichTextItem[]);
+
+                        // 2. Tailwind 우회를 위한 고유 HEX 코드 변수 추출
+                        const notionColorKey =
+                            calloutData.color === 'default' ? 'default_background' : calloutData.color;
+                        const colorStyle =
+                            NOTION_BG_STYLES[notionColorKey] ||
+                            NOTION_BG_STYLES['default_background'] ||
+                            NOTION_BG_STYLES['default'];
+
+                        const bgLight = colorStyle?.light?.match(/background-color:\s*([^;]+)/)?.[1] || '#f1f1ef';
+                        const textLight = colorStyle?.light?.match(/color:\s*([^;]+)/)?.[1] || '#37352f';
+                        const bgDark =
+                            colorStyle?.dark?.match(/background-color:\s*([^;]+)/)?.[1] || 'rgba(255, 255, 255, 0.05)';
+                        const textDark = colorStyle?.dark?.match(/color:\s*([^;]+)/)?.[1] || '#e3e3e3';
+
+                        const inlineStyles = `
+        --nbg-l: ${bgLight}; --ntx-l: ${textLight};
+        --nbg-d: ${bgDark}; --ntx-d: ${textDark};
+    `.trim();
+
+                        let iconHtml = '';
+                        if (calloutData.icon) {
+                            if (calloutData.icon.type === 'emoji') {
+                                iconHtml = `<span class="text-xl flex-shrink-0 select-none">${calloutData.icon.emoji}</span>`;
+                            } else if (calloutData.icon.type === 'external') {
+                                iconHtml = `<img src="${calloutData.icon.external.url}" class="w-5 h-5 object-contain flex-shrink-0" alt="icon" />`;
+                            } else if (calloutData.icon.type === 'file') {
+                                iconHtml = `<img src="${calloutData.icon.file.url}" class="w-5 h-5 object-contain flex-shrink-0" alt="icon" />`;
+                            }
+                        }
+
+                        let childrenHtml = '';
+                        if (calloutData.children && calloutData.children.length > 0) {
+                            childrenHtml = `<div class="mt-2 space-y-1 notion-callout-children">${renderBlocksToHtml(calloutData.children)}</div>`;
+                        }
+
+                        // 3. 인라인 스타일 주입 구조로 가공하여 렌더링
+                        html += `
+    <div class="my-4 flex gap-3 p-4 rounded-xl border
+                border-slate-200/50 dark:border-slate-800/30
+                bg-slate-100 text-slate-800
+                dark:bg-slate-800/70 dark:text-slate-100">
+        ${iconHtml}
+        <div class="flex-1 min-w-0 leading-relaxed text-sm md:text-base">
+            <div class="font-bold text-slate-900 dark:text-white">
+                ${text}
+            </div>
+            ${childrenHtml}
+        </div>
     </div>
-  `;
+`;
+                        break;
+                    }
+                    case 'table': {
+                        const tableBlock = block as unknown as {
+                            type: 'table';
+                            table: {
+                                children?: BlockObjectResponse[];
+                            };
+                        };
+
+                        if (tableBlock.type !== 'table') continue;
+
+                        const rows = tableBlock.table.children ?? [];
+
+                        html += `
+        <div class="my-6 overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-700">
+            <table class="w-full border-collapse text-sm">
+                <tbody>
+                    ${renderBlocksToHtml(rows)}
+                </tbody>
+            </table>
+        </div>
+    `;
+                        break;
+                    }
+                    case 'table_row': {
+                        const rowBlock = block as unknown as {
+                            type: 'table_row';
+                            table_row: {
+                                cells: RichTextItem[][];
+                            };
+                        };
+
+                        if (rowBlock.type !== 'table_row') continue;
+
+                        const cellsHtml = rowBlock.table_row.cells
+                            .map((cell) => {
+                                const text = renderRichText(cell as unknown as NotionRichTextItem[]);
+
+                                return `
+                <td class="border border-slate-200 dark:border-slate-700 px-4 py-3 text-slate-700 dark:text-slate-200 align-top">
+                    ${text}
+                </td>
+            `;
+                            })
+                            .join('');
+
+                        html += `<tr>${cellsHtml}</tr>`;
+                        break;
+                    }
+
+                    case 'quote': {
+                        if (typedBlock.type !== 'quote') continue;
+
+                        // 1. 인용문 텍스트 내 서식(볼드, 링크 등) 복원
+                        const text = renderRichText(typedBlock.quote.rich_text as NotionRichTextItem[]);
+
+                        // 2. 텍스트가 비어있지 않을 때만 HTML 생성
+                        if (text.trim() !== '') {
+                            html += `
+            <blockquote class="my-6 pl-4 border-l-4 border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-400 text-base md:text-lg leading-8">
+                ${text}
+            </blockquote>
+        `;
+                        }
                         break;
                     }
 
                     default: {
-                        // 🎯 [수정] default 문 안에 남아있던 가짜 any 객체 서치 로직을 완전 삭제하고
-                        // unknown 타입캐스팅을 이용해 안전하게 자식 요소를 재귀 렌더링하도록 변경
                         const fallbackBlock = block as ExtendedBlockObjectResponse;
                         const blockInternalData = fallbackBlock[type];
 
@@ -434,6 +724,7 @@ export async function getPostContent(blockId: string): Promise<string> {
                     }
                 }
             }
+            closeListIfNeeded();
             return html;
         }
 

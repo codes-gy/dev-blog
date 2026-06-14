@@ -19,7 +19,7 @@ export default function Comments({ postSlug }: CommentsProps) {
 
     return (
         <section className="mt-12 w-full border-t border-slate-200 pt-10 dark:border-slate-800">
-            <h2 className="mb-6 text-xl font-bold text-slate-950 dark:text-slate-50">💬 댓글 나누기</h2>
+            <h2 className="mb-6 text-xl font-bold text-slate-950 dark:text-slate-50">💬 댓글 작성하기</h2>
 
             <Giscus
                 repo={NEXT_PUBLIC_GISCUS_REPO}

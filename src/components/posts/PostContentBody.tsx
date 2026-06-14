@@ -57,7 +57,7 @@ export default function PostContentBody({ contentHtml }: PostContentBodyProps) {
             {/* 🎯 이미지 추출을 위해 본문 영역을 ref로 감싸줍니다. */}
             <div ref={containerRef} onClick={handleBodyClick}>
                 <article
-                    className="prose dark:prose-invert notion-root-container max-w-none font-sans select-text"
+                    className="prose prose-lg dark:prose-invert notion-root-container prose-p:text-base prose-p:leading-8 prose-li:text-base prose-li:leading-8 prose-td:text-base prose-td:leading-7 prose-th:text-base prose-th:leading-7 prose-code:text-sm prose-pre:text-sm max-w-none font-sans select-text"
                     dangerouslySetInnerHTML={{ __html: contentHtml }}
                 />
             </div>
@@ -66,10 +66,7 @@ export default function PostContentBody({ contentHtml }: PostContentBodyProps) {
             {currentIndex !== -1 && images.length > 0 && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
                     {/* 투명 배경 클릭 시 닫기 */}
-                    <div
-                        className="absolute inset-0 cursor-zoom-out"
-                        onClick={() => setCurrentIndex(-1)}
-                    />
+                    <div className="absolute inset-0 cursor-zoom-out" onClick={() => setCurrentIndex(-1)} />
 
                     <div className="relative z-10 flex max-h-[90vh] max-w-[90vw] items-center justify-center">
                         {/* 닫기 버튼 */}
@@ -91,6 +88,7 @@ export default function PostContentBody({ contentHtml }: PostContentBodyProps) {
                         )}
 
                         {/* 현재 인덱스의 이미지 노출 */}
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                             src={images[currentIndex]}
                             alt={`확대 이미지 ${currentIndex + 1}`}
