@@ -1,6 +1,5 @@
-// src/app/rss.xml/route.ts
 import { NextResponse } from 'next/server';
-import { getBlogPosts } from '@/src/lib/data';
+import { getBlogPosts } from '@/src/lib/data/api';
 
 export const dynamic = 'force-dynamic';
 

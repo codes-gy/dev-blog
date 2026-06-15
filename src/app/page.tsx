@@ -1,9 +1,9 @@
+import NotionLiveRefresh from '@/src/components/common/NotionLiveRefresh';
 import FeaturedProjects from '@/src/components/home/FeaturedProjects';
 import HeroHeader from '@/src/components/home/HeroHeader';
 import LatestPostsSection from '@/src/components/home/LatestPostsSection';
 import Profile from '@/src/components/home/Profile';
-import NotionLiveRefresh from '@/src/components/posts/NotionLiveRefresh';
-import { getBlogPosts } from '@/src/lib/data';
+import { getBlogPosts } from '@/src/lib/data/api';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;

@@ -5,9 +5,10 @@ import AdSenseInArticle from '@/src/components/posts/AdSenseInArticle';
 import Comments from '@/src/components/posts/Comments';
 import LikeButton from '@/src/components/posts/LikeButton';
 import PostContentBody from '@/src/components/posts/PostContentBody';
-import ShareButtons from '@/src/components/posts/ShareButtons';
 import ViewCounter from '@/src/components/posts/ViewCounter';
-import { getBlogPost, getPostContent } from '@/src/lib/data';
+import ShareButtons from '@/src/components/posts/share/ShareButtons';
+import { getBlogPost } from '@/src/lib/data/api';
+import { getPostContent } from '@/src/lib/data/parser';
 import { prisma } from '@/src/lib/prisma';
 
 interface PostPageProps {
@@ -175,7 +176,9 @@ export default async function PostDetailPage({ params }: PostPageProps) {
             */}
             <AdSenseInArticle />
 
-            {/* 🌟 [추가] 소셜 공유 버튼 섹션 배치 */}
+            {/*
+            소셜 공유 버튼 섹션 배치 개발중으로 hidden 처리 작업 후 제거
+            */}
             <div className="mt-10 hidden border-b border-slate-100 pb-8 dark:border-slate-800/60">
                 <ShareButtons
                     slug={slug}

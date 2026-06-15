@@ -1,6 +1,6 @@
 import { revalidatePath } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
-import { notion } from '@/src/lib/data';
+import { notion } from '@/src/lib/data/config';
 
 interface NotionWebhookPayload {
     data?: {
@@ -25,9 +25,7 @@ export async function GET() {
             controller.enqueue(encoder.encode('data: connected\n\n'));
         },
         cancel(controller) {
-            activeControllers.delete(
-                controller as unknown as ReadableStreamDefaultController,
-            );
+            activeControllers.delete(controller as unknown as ReadableStreamDefaultController);
         },
     });
 
@@ -46,10 +44,7 @@ export async function POST(request: NextRequest) {
     try {
         const rawBody = await request.text();
         if (!rawBody) {
-            return NextResponse.json(
-                { message: '요청 본문이 비어있습니다.' },
-                { status: 400 },
-            );
+            return NextResponse.json({ message: '요청 본문이 비어있습니다.' }, { status: 400 });
         }
         const body = JSON.parse(rawBody) as NotionWebhookPayload;
         const pageId = body.data?.id;
@@ -62,11 +57,7 @@ export async function POST(request: NextRequest) {
                 });
                 if ('properties' in pageData) {
                     const slugProp = pageData.properties.Slug;
-                    if (
-                        slugProp &&
-                        slugProp.type === 'rich_text' &&
-                        slugProp.rich_text.length > 0
-                    ) {
+                    if (slugProp && slugProp.type === 'rich_text' && slugProp.rich_text.length > 0) {
                         slug = slugProp.rich_text[0].plain_text;
                     }
                 }
@@ -78,9 +69,7 @@ export async function POST(request: NextRequest) {
             revalidatePath(`/posts/${slug}`);
             console.log(`[Webhook] 상세 페이지 캐시 제거 완료: /posts/${slug}`);
         } else {
-            console.warn(
-                '[Webhook 경고] 갱신할 포스트의 Slug를 찾지 못했습니다.',
-            );
+            console.warn('[Webhook 경고] 갱신할 포스트의 Slug를 찾지 못했습니다.');
         }
         // 백엔드 캐시를 제거합니다.
         revalidatePath('/', 'layout');
@@ -104,8 +93,7 @@ export async function POST(request: NextRequest) {
             now: Date.now(),
         });
     } catch (error) {
-        const errorMessage =
-            error instanceof Error ? error.message : '알 수 없는 에러';
+        const errorMessage = error instanceof Error ? error.message : '알 수 없는 에러';
         console.error('[Webhook 캐시 갱신 실패]:', errorMessage);
         return NextResponse.json({ message: '웹훅 오류' }, { status: 500 });
     }
