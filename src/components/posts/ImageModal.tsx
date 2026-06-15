@@ -12,6 +12,7 @@ export default function ImageModal({ src, onClose }: ImageModalProps) {
             onClick={onClose}
         >
             <div className="relative max-h-[90vh] max-w-[90vw]">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                     src={src}
                     alt="확대된 이미지"

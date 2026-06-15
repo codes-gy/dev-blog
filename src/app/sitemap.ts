@@ -1,6 +1,5 @@
-// src/app/sitemap.ts
 import type { MetadataRoute } from 'next';
-import { getBlogPosts } from '@/src/lib/data';
+import { getBlogPosts } from '@/src/lib/data/api';
 
 export const dynamic = 'force-dynamic';
 

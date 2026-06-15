@@ -1,19 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useMounted } from '@/src/hooks/useMounted';
 import { useTheme } from 'next-themes';
 
 export default function ThemeToggle() {
     const { theme, setTheme } = useTheme();
-    const [mounted, setMounted] = useState(false);
+    const isMounted = useMounted();
 
-    useEffect(() => {
-        requestAnimationFrame(() => {
-            setMounted(true);
-        });
-    }, []);
-
-    if (!mounted) return <div className="h-9 w-9" />;
+    if (!isMounted) return <div className="h-9 w-9" />;
 
     return (
         <button
