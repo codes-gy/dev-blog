@@ -74,6 +74,7 @@ export async function getBlogPosts(
                 category: getSelect(props['Category']) || '일반',
                 publishedAt: getDate(props['PublishedAt']) || '날짜 미정',
                 coverImage: getCover(page),
+                notionUrl: page.url,
             };
         });
         return {
@@ -132,6 +133,7 @@ export async function getBlogPost(slug: string): Promise<Post | null> {
             category: getSelect(props['Category']) || '일반',
             publishedAt: getDate(props['PublishedAt']) || '날짜 미정',
             coverImage: getCover(page),
+            notionUrl: page.url,
         };
     } catch (error) {
         console.error('상세 페이지 데이터를 가져오는 중 에러:', error);

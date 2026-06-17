@@ -9,6 +9,7 @@ export interface Post {
     coverImage: string;
     publishedAt: string;
     category: string;
+    notionUrl?: string;
 }
 
 export interface PaginatedPosts {

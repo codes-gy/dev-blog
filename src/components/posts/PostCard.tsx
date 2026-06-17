@@ -42,13 +42,11 @@ export default function PostCard({ post }: PostCardProps) {
             {/* 카드 하단: 텍스트 정보 구역 */}
             <div className="p-6">
                 {/* 날짜 표시 */}
-                <span className="text-xs font-medium text-slate-700 dark:text-slate-200">
-                    {post.publishedAt}
-                </span>
+                <span className="text-xs font-medium text-slate-700 dark:text-slate-200">{post.publishedAt}</span>
 
                 {/* 글 제목 */}
                 {/* group-hover:text-blue-600: 마우스를 올리면 글자색이 세련된 파란색으로 변경됨 */}
-                <h2 className="mt-2 mb-3 line-clamp-1 text-xl font-bold text-slate-800 transition-colors group-hover:text-blue-600 dark:text-slate-200">
+                <h2 className="mt-2 mb-3 line-clamp-2 text-lg font-bold break-keep text-slate-800 transition-colors group-hover:text-blue-600 dark:text-slate-200">
                     {post.title}
                 </h2>
 
@@ -60,10 +58,7 @@ export default function PostCard({ post }: PostCardProps) {
 
                 {/* 읽기 버튼 디자인 */}
                 <div className="mt-4 flex items-center border-t border-slate-400 pt-4 text-sm font-semibold text-blue-500 dark:border-slate-700">
-                    더 읽어보기{' '}
-                    <span className="ml-1 transition-transform group-hover:translate-x-1">
-                        →
-                    </span>
+                    더 읽어보기 <span className="ml-1 transition-transform group-hover:translate-x-1">→</span>
                 </div>
             </div>
         </Link>
