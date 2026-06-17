@@ -18,7 +18,7 @@ export default async function AdminDashboardPage() {
     let data: string[] = [];
     let posts: Post[] = [];
     let systemMessage: '정상' | '오류' = '정상';
-    const errorMessage = ''; // 👈 화면에 힌트를 줄 서브 텍스트
+
     if (!DATA_SOURCE_ID || !process.env.NOTION_API_KEY) {
         systemMessage = '오류';
     } else {
@@ -36,7 +36,6 @@ export default async function AdminDashboardPage() {
 
     const totalPostsCount = posts?.length || 0;
     const totalCategoriesCount = categories?.length || 0;
-    const recentPosts = posts ? posts.slice(0, 5) : [];
 
     // 노션 글 데이터를 기반으로 카테고리별 개수 연산
     const chartData = categories.map((category) => {
