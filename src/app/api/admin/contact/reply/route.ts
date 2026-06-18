@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import nodemailer from 'nodemailer';
+import { getEmailProvider } from '@/src/lib/email/emailFactory';
 import { prisma } from '@/src/lib/prisma';
 
 export async function POST(request: Request) {
@@ -11,36 +11,16 @@ export async function POST(request: Request) {
             return NextResponse.json({ success: false, error: '필수 데이터가 누락되었습니다.' }, { status: 400 });
         }
 
-        // 1. 이메일 발송을 위한 SMTP Transport 설정
-        // ※ Gmail이나 Naver 등 사용하는 메일 서비스에 맞춰 설정합니다.
-        const transporter = nodemailer.createTransport({
-            service: 'gmail', // gmail, naver, daum 등 입력 가능
-            auth: {
-                user: process.env.EMAIL_USER, // 발신자 이메일 주소 (예: admin@gmail.com)
-                pass: process.env.EMAIL_PASS, // 발신자 이메일 비밀번호 또는 앱 비밀번호
-            },
-        });
+        // 인터페이스 팩토리를 통해 유동적으로 프로바이더 주입받기
+        const emailService = getEmailProvider();
 
-        // 2. 이메일 전송 옵션 정의
-        const mailOptions = {
-            from: process.env.EMAIL_USER, // 보내는 사람
-            to: email, // 받는 사람 (문의한 유저의 이메일)
-            subject: subject, // 메일 제목
-            text: replyMessage, // 메일 본문 내용 (Plain Text)
-            // 필요 시 html: `<p>${replyMessage}</p>` 로 HTML 양식 발송도 가능합니다.
-        };
+        // 규격화된 인터페이스 메서드로 발송 (내부가 SMTP든 API든 동일하게 작동)
+        await emailService.send(email, subject, replyMessage);
 
-        // 3. 실제 메일 전송 실행
-        await transporter.sendMail(mailOptions);
-
-        // 4. (선택사항) 메일 발송이 성공하면 DB에서도 해당 문의의 처리 상태를 '완료'로 업데이트
+        // DB 상태 업데이트
         await prisma.contact.update({
-            where: {
-                id: BigInt(id),
-            },
-            data: {
-                isProcessed: true,
-            },
+            where: { id: BigInt(id) },
+            data: { isProcessed: true },
         });
 
         return NextResponse.json({

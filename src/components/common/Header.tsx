@@ -16,10 +16,7 @@ export default function Header() {
                 {/* 우측 메뉴 버튼들 */}
                 <nav className="flex items-center gap-6 text-sm font-medium text-slate-600">
                     {/* hover:text-blue-600: 글자에 마우스를 올리면 파란색으로 변경 */}
-                    <Link
-                        href="/posts"
-                        className="transition-colors hover:text-blue-600"
-                    >
+                    <Link href="/posts" className="transition-colors hover:text-blue-600">
                         Posts
                     </Link>
                     <a
@@ -30,7 +27,9 @@ export default function Header() {
                     >
                         GitHub
                     </a>
-
+                    <Link href="/contact" className="transition-colors hover:text-blue-600">
+                        문의하기
+                    </Link>
                     {/* 개발자 블로그의 감성을 더해줄 임시 다크모드 배지 */}
                     {/*<button className="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-base transition-colors">*/}
                     {/*    🌙*/}

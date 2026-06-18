@@ -14,12 +14,14 @@ export async function middleware(request: NextRequest) {
 
         // 토큰이 아예 없으면 로그인 안 한 것이므로 로그인페이지로 이동
         if (!token) {
-            return NextResponse.redirect(new URL('/admin/login', request.url));
+            const loginUrl = new URL('/admin/login', request.url);
+            loginUrl.searchParams.set('next', pathname); // ?next=/admin/contact 형태 완성
+            return NextResponse.redirect(loginUrl);
         }
 
         try {
             // 토큰 검증 API로 요청을 보냄
-            const verifyUrl = new URL('/api/auth/admin', request.url);
+            const verifyUrl = new URL('/api/admin/login', request.url);
 
             const res = await fetch(verifyUrl, {
                 method: 'GET',
