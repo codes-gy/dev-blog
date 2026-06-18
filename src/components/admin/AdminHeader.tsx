@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 
 export default function AdminHeader() {
     return (
@@ -11,14 +12,22 @@ export default function AdminHeader() {
                     블로그의 전체 현황을 모니터링하고 관리합니다.
                 </p>
             </div>
-            <a
-                href="https://app.notion.com/p/37a48f9c47ee80468686e8c922f0ef9b?v=37a48f9c47ee806293b4000cae7d171c"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500 dark:bg-blue-500 dark:hover:bg-blue-400"
-            >
-                📝 노션 데이터베이스 이동
-            </a>
+            <div className="flex flex-wrap items-center gap-2">
+                <a
+                    href="https://app.notion.com/p/37a48f9c47ee80468686e8c922f0ef9b?v=37a48f9c47ee806293b4000cae7d171c"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500 dark:bg-blue-500 dark:hover:bg-blue-400"
+                >
+                    📝 노션 데이터베이스 이동
+                </a>
+                <Link
+                    href="/admin/contact"
+                    className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500 dark:bg-blue-500 dark:hover:bg-blue-400"
+                >
+                    📝 문의 내용 목록
+                </Link>
+            </div>
         </div>
     );
 }

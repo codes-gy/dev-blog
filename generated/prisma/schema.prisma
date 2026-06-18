@@ -21,3 +21,17 @@ model Post {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model Contact {
+  id      BigInt @id @default(autoincrement())
+  name    String // 문의자 이름 또는 닉네임
+  email   String // 회신받을 이메일 주소
+  subject String // 문의 제목
+  message String @db.Text // 문의 내용 (긴 텍스트를 저장하기 위해 @db.Text 지정)
+
+  // 💡 운영 관리 생산성을 위한 권장 필드
+  isProcessed Boolean @default(false) // 답변 처리 완료 여부 (기본값: false)
+
+  createdAt DateTime @default(now()) // 문의 접수 일시
+  updatedAt DateTime @updatedAt // 관리 상태 수정 일시
+}
