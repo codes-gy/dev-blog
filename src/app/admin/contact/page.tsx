@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Loading from '@/src/app/loading';
 
 interface ContactItem {
     id: string;
@@ -109,11 +110,7 @@ export default function AdminContactPage() {
     };
 
     if (loading) {
-        return (
-            <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-slate-950">
-                <p className="text-sm text-slate-500 dark:text-slate-400">목록을 불러오는 중...</p>
-            </div>
-        );
+        return <Loading />;
     }
 
     return (
