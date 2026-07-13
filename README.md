@@ -1,6 +1,6 @@
 #  Notion API 연동 Next.js 기술 블로그
 
-노션(Notion) 데이터베이스를 헤드리스 CMS(Headless CMS)로 활용하여, 노션에서 글을 작성하고 관리하면 Next.js 블로그에 실시간으로 아름답게 렌더링되는 모던 웹 애플리케이션 프로젝트입니다.
+노션 데이터베이스를 Headless CMS로 활용하여, 노션에서 글을 작성하고 관리하면 Next.js 블로그에 실시간으로 아름답게 렌더링되는 모던 웹 애플리케이션 프로젝트입니다.
 
 ---
 ![프로젝트 샘플 이미지](public/sampleImage.png)
