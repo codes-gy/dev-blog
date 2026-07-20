@@ -34,6 +34,6 @@ export class NodemailerProvider implements EmailProvider {
 
 export class ConsoleEmailProvider implements EmailProvider {
     async send(to: string, subject: string, text: string): Promise<void> {
-        console.log(`[이메일 가상 발송] 수신: ${to} | 제목: ${subject} | 내용: ${text}`);
+        console.log(`[이메일] 수신: ${to} | 제목: ${subject} | 내용: ${text}`);
     }
 }

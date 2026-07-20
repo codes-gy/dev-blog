@@ -11,13 +11,10 @@ export async function POST(request: Request) {
             return NextResponse.json({ success: false, error: '필수 데이터가 누락되었습니다.' }, { status: 400 });
         }
 
-        // 인터페이스 팩토리를 통해 유동적으로 프로바이더 주입받기
         const emailService = getEmailProvider();
 
-        // 규격화된 인터페이스 메서드로 발송 (내부가 SMTP든 API든 동일하게 작동)
         await emailService.send(email, subject, replyMessage);
 
-        // DB 상태 업데이트
         await prisma.contact.update({
             where: { id: BigInt(id) },
             data: { isProcessed: true },

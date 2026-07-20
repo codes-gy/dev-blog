@@ -3,7 +3,7 @@ import { getBlogPosts } from '@/src/lib/data/api';
 
 export const dynamic = 'force-dynamic';
 
-// 날짜 유효성을 검사하는 안전 장치 함수
+// 날짜 유효성을 검사하는 함수
 function isValidDate(date: Date): boolean {
     return date && !isNaN(date.getTime());
 }

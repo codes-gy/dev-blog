@@ -4,7 +4,7 @@ export default function PrivacyPolicyPage() {
     return (
         <div className="min-h-screen bg-slate-50 px-4 py-8 md:px-6 md:py-16 dark:bg-slate-950">
             <article className="mx-auto max-w-6xl rounded-xl border border-slate-200 bg-white px-4 py-5 shadow-sm md:rounded-2xl md:p-12 dark:border-slate-800 dark:bg-slate-900">
-                {/* 🏷️ 상단 헤더 영역 */}
+                {/* 상단 헤더 */}
                 <header className="border-b border-slate-100 pb-4 dark:border-slate-800">
                     <h1 className="text-base font-bold tracking-tight text-slate-900 md:text-3xl dark:text-slate-50">
                         개인정보처리방침
@@ -14,9 +14,8 @@ export default function PrivacyPolicyPage() {
                     </p>
                 </header>
 
-                {/* 법적 필수 본문 서술 영역 */}
+                {/* 법적 필수 본문 */}
                 <div className="mt-5 flex flex-col gap-5 text-[13px] leading-relaxed text-slate-600 md:mt-10 md:gap-8 md:text-base dark:text-slate-300">
-                    {/* 섹션 1 */}
                     <section>
                         <h2 className="mb-1 text-[13px] font-bold text-slate-800 md:mb-2 md:text-lg dark:text-slate-200">
                             1. 개인정보의 처리 목적 및 수집 항목
@@ -29,7 +28,6 @@ export default function PrivacyPolicyPage() {
                         </p>
                     </section>
 
-                    {/* 섹션 2 */}
                     <section>
                         <h2 className="mb-1 text-[13px] font-bold text-slate-800 md:mb-2 md:text-lg dark:text-slate-200">
                             2. 쿠키(Cookie) 및 구글 애드센스 광고 안내
@@ -62,7 +60,6 @@ export default function PrivacyPolicyPage() {
                         </ul>
                     </section>
 
-                    {/* 섹션 3 */}
                     <section>
                         <h2 className="mb-1 text-[13px] font-bold text-slate-800 md:mb-2 md:text-lg dark:text-slate-200">
                             3. 개인정보의 보유 및 파기 절차
@@ -74,7 +71,6 @@ export default function PrivacyPolicyPage() {
                         </p>
                     </section>
 
-                    {/* 섹션 4 */}
                     <section>
                         <h2 className="mb-1 text-[13px] font-bold text-slate-800 md:mb-2 md:text-lg dark:text-slate-200">
                             4. 이용자의 권리와 그 행사방법
@@ -86,7 +82,6 @@ export default function PrivacyPolicyPage() {
                         </p>
                     </section>
 
-                    {/* 섹션 5 */}
                     <section>
                         <h2 className="mb-1 text-[13px] font-bold text-slate-800 md:mb-2 md:text-lg dark:text-slate-200">
                             5. 권익침해 구제방법
@@ -102,7 +97,6 @@ export default function PrivacyPolicyPage() {
                         </ul>
                     </section>
 
-                    {/* 섹션 6 */}
                     <section>
                         <h2 className="mb-1 text-[13px] font-bold text-slate-800 md:mb-2 md:text-lg dark:text-slate-200">
                             6. 개인정보 보호책임자 및 안내
@@ -122,8 +116,8 @@ export default function PrivacyPolicyPage() {
                     </section>
                 </div>
 
-                {/* 메인으로 돌아가기 버튼 */}
                 <footer className="mt-6 border-t border-slate-100 pt-4 text-center md:mt-12 md:pt-8 dark:border-slate-800">
+                    {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
                     <a
                         href="/"
                         className="inline-flex items-center justify-center rounded-xl border-2 border-slate-300 bg-white px-6 py-2.5 text-[12px] font-bold text-slate-700 shadow-sm transition-all duration-200 hover:border-slate-400 hover:bg-slate-100 hover:text-slate-900 active:scale-[0.98] md:px-8 md:py-3 md:text-base dark:border-slate-700 dark:bg-slate-950 dark:text-slate-300 dark:hover:border-slate-500 dark:hover:bg-slate-900 dark:hover:text-slate-50"

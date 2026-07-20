@@ -50,8 +50,8 @@ export async function getBlogPosts(
 
         const response: QueryDataSourceResponse = await notion.dataSources.query({
             data_source_id: DATA_SOURCE_ID,
-            page_size: pageSize, //한 번에 호출할 최대 게시글 개수
-            start_cursor: startCursor, //주소창에서 넘겨받은 다음 페이지 시작점 커서 ID
+            page_size: pageSize,
+            start_cursor: startCursor,
             filter: {
                 and: filterAndArray,
             },
@@ -112,19 +112,16 @@ export async function getBlogPost(slug: string): Promise<Post | null> {
             },
         });
 
-        // 만약 조건에 맞는 글이 노션에 없다면 null을 반환
         if (response.results.length === 0) {
             return null;
         }
 
         const page = response.results[0];
 
-        // 데이터가 페이지 형태가 맞는지 검증 (isFullPage 활용)
         if (!isFullPage(page)) return null;
 
         const props = page.properties;
 
-        // 목록 조회와 동일하게 데이터를 매핑해서 리턴합니다.
         return {
             id: page.id,
             title: getText(props['Title']) || '제목 없음',
@@ -163,7 +160,6 @@ export async function getAllCategories(): Promise<string[]> {
             }
         });
 
-        // Set을 다시 배열로 바꾸고 가나다순 정렬하여 반환
         return Array.from(categoriesSet).sort((a, b) => {
             if (a === '전체') return -1;
             if (b === '전체') return 1;

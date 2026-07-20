@@ -30,7 +30,6 @@ export default function AdminPostTable({ posts }: AdminPostTableProps) {
                 </span>
             </div>
 
-            {/* 📊 데이터 테이블 */}
             <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm text-slate-600 dark:text-slate-400">
                     <thead className="bg-slate-50 text-xs font-bold text-slate-500 uppercase dark:bg-slate-950/50 dark:text-slate-400">
@@ -56,7 +55,6 @@ export default function AdminPostTable({ posts }: AdminPostTableProps) {
                                     {post.publishedAt || '날짜 미지정'}
                                 </td>
                                 <td className="px-4 py-3.5 text-right whitespace-nowrap">
-                                    {/* 💡 꼼꼼한 예외처리: 혹시나 원본 URL이 누락됐을 땐 기본 대시보드 주소로 가드 처리 */}
                                     <a
                                         href={post.notionUrl || 'https://notion.so'}
                                         target="_blank"

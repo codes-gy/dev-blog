@@ -1,9 +1,7 @@
 import type { MetadataRoute } from 'next';
 
-// Next.js가 자동으로 /robots.txt 파일을 생성해줌
+// Next.js가 /robots.txt 파일을 생성
 export default function robots(): MetadataRoute.Robots {
-    // 환경변수에 NEXT_PUBLIC_SITE_URL이 있으면 그 값을 사용
-    // 없으면 기본 주소를 사용함
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://dev-blog-topaz-rho.vercel.app';
 
     return {

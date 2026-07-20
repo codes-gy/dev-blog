@@ -1,12 +1,21 @@
+import Link from 'next/link';
 import ProjectCard from '@/src/components/home/ProjectCard';
 
 export default function FeaturedProjects() {
     return (
         <section className="mb-16">
-            <h3 className="mb-6 flex items-center gap-2 text-xl font-bold text-slate-900 dark:text-slate-50">
-                ✨ 주요 프로젝트
-                <span className="text-xs font-normal text-slate-400 dark:text-slate-500">(Featured Projects)</span>
-            </h3>
+            <div className="mb-8 flex items-center justify-between">
+                <h3 className="mb-6 flex items-center gap-2 text-xl font-bold text-slate-900 dark:text-slate-50">
+                    ✨ 주요 프로젝트
+                    <span className="text-xs font-normal text-slate-400 dark:text-slate-500">(Featured Projects)</span>
+                </h3>
+                <Link
+                    href="/resume"
+                    className="flex items-center gap-1 text-sm font-bold text-blue-600 hover:underline dark:text-blue-400"
+                >
+                    경력기술서 보기
+                </Link>
+            </div>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <ProjectCard
                     title="Spring WebFlux & Redis 기반 대기열 관리 시스템"

@@ -14,8 +14,6 @@ export default function AdminLoginPage() {
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
 
-    // 💡 TS6385 완벽 해결: Deprecated된 React 고유 핸들러 타입을 전혀 사용하지 않고,
-    // 매개변수 e에 React가 새로 밀고 있는 인라인 서브밋 이벤트 타입을 직접 주입합니다.
     const handleSubmit = async (e: React.BaseSyntheticEvent<SubmitEvent, HTMLFormElement, HTMLFormElement>) => {
         e.preventDefault();
         setError('');

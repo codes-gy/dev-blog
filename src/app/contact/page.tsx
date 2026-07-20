@@ -22,7 +22,6 @@ export default function ContactPage() {
         setIsSubmitting(true);
 
         try {
-            // 백엔드가 존재하는 올바른 API 라우트 주소로 요청
             const response = await fetch('/api/admin/contact', {
                 method: 'POST',
                 headers: {
@@ -39,7 +38,7 @@ export default function ContactPage() {
                 alert(result.message || result.error || '메시지 전송에 실패했습니다. 다시 시도해 주세요.');
             }
         } catch (error) {
-            console.error('Contact Submit Error:', error);
+            console.error('문의하기 전송 오류:', error);
             alert('메시지 전송에 실패했습니다. 다시 시도해 주세요.');
         } finally {
             setIsSubmitting(false);
@@ -49,7 +48,7 @@ export default function ContactPage() {
     return (
         <div className="min-h-screen bg-slate-50 px-4 py-8 md:px-6 md:py-16 dark:bg-slate-950">
             <article className="mx-auto max-w-2xl rounded-xl border border-slate-200 bg-white px-4 py-6 shadow-sm md:rounded-2xl md:p-12 dark:border-slate-800 dark:bg-slate-900">
-                {/* 🏷️ 상단 헤더 영역 */}
+                {/* 상단 헤더 */}
                 <header className="border-b border-slate-100 pb-4 text-center md:pb-6 dark:border-slate-800">
                     <h1 className="text-xl font-bold tracking-tight text-slate-900 md:text-3xl dark:text-slate-50">
                         문의하기
@@ -59,7 +58,7 @@ export default function ContactPage() {
                     </p>
                 </header>
 
-                {/* 📩 전송 완료 메시지 */}
+                {/* 완료 메시지 */}
                 {isSubmitted ? (
                     <div className="animate-fade-in mt-8 py-12 text-center">
                         <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-50 text-green-500 dark:bg-green-950/30 dark:text-green-400">
@@ -88,9 +87,8 @@ export default function ContactPage() {
                         </button>
                     </div>
                 ) : (
-                    /* 📝 문의 입력 폼 영역 */
+                    /* 문의 입력 폼 */
                     <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4 text-sm md:mt-8 md:gap-5">
-                        {/* 이름 & 이메일 */}
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5">
                             <div className="flex flex-col gap-1.5">
                                 <label
@@ -171,14 +169,13 @@ export default function ContactPage() {
                             />
                         </div>
 
-                        {/* 개인정보 안내 가이드 문구 */}
+                        {/* 개인정보 안내 가이드 */}
                         <p className="text-[11px] leading-normal text-slate-400 md:text-[12px] dark:text-slate-500">
                             * 문의 접수를 위해 입력하신 이름과 이메일 주소는 오직 문의 답변 및 회신 목적으로만 사용되며,
                             관련 조치가 완료된 후 지체 없이 영구 파기됩니다. 이에 동의하시는 경우에만 발송해 주시기
                             바랍니다.
                         </p>
 
-                        {/* 💡 신설: 두 버튼을 하나의 플렉스 가로 정렬 레이아웃으로 결합 */}
                         <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-center">
                             {/* [버튼 1] 메시지 보내기 */}
                             <button
@@ -189,7 +186,6 @@ export default function ContactPage() {
                                 {isSubmitting ? '전송 중...' : '메시지 보내기'}
                             </button>
 
-                            {/* [버튼 2] 취소하고 홈으로 돌아가기 */}
                             {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
                             <a
                                 href="/"

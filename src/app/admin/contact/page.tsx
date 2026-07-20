@@ -40,7 +40,7 @@ export default function AdminContactPage() {
         fetchContacts();
     }, []);
 
-    // 낙관적 업데이트를 적용하여 즉시 반응하는 처리 상태 변경 핸들러
+    // 즉시 반응하는 처리 상태 변경 핸들러
     const toggleStatus = async (id: string, currentStatus: boolean) => {
         const nextStatus = !currentStatus;
 
@@ -148,11 +148,9 @@ export default function AdminContactPage() {
 
                 <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
                     <div className="overflow-x-auto">
-                        {/* 💡 text-left 제거 후 기본 또는 text-center 구조 확보 */}
                         <table className="w-full border-collapse text-sm">
                             <thead className="bg-slate-50 text-xs font-semibold text-slate-700 dark:bg-slate-950 dark:text-slate-300">
                                 <tr>
-                                    {/* 💡 헤더 열들에 text-center 추가 */}
                                     <th className="px-4 py-3 text-center md:px-6">상태</th>
                                     <th className="px-4 py-3 text-center md:px-6">이름</th>
                                     <th className="px-4 py-3 text-center md:px-6">이메일</th>
@@ -177,7 +175,6 @@ export default function AdminContactPage() {
                                             }}
                                             className="cursor-pointer transition hover:bg-slate-50/50 dark:hover:bg-slate-800/30"
                                         >
-                                            {/* 💡 본문 데이터 셀들에도 text-center를 부여하여 열 밸런스를 맞춤 */}
                                             <td className="px-4 py-4 text-center whitespace-nowrap md:px-6">
                                                 <button
                                                     onClick={(e) => {
@@ -200,7 +197,6 @@ export default function AdminContactPage() {
                                                 {item.email}
                                             </td>
                                             <td className="px-4 py-4 md:px-6">
-                                                {/* 제목은 가운뎃줄 정렬 시 텍스트 밸런스를 위해 flex justify-center 구조 할당 */}
                                                 <div className="flex justify-center">
                                                     <div className="max-w-[180px] truncate font-semibold text-slate-900 md:max-w-xs dark:text-slate-50">
                                                         {item.subject}

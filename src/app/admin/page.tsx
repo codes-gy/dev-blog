@@ -48,22 +48,21 @@ export default async function AdminDashboardPage() {
 
     return (
         <div className="mx-auto min-h-screen max-w-6xl bg-slate-50 px-6 py-12 duration-200 dark:bg-slate-950">
-            {/* 어드민 상단 헤더 */}
+            {/* 상단 헤더 */}
             <AdminHeader />
-            {/* 1. 통계 요약 카드 섹션 */}
+            {/* 통계 요약 카드 */}
             <StatCards
                 totalPostsCount={totalPostsCount}
                 totalCategoriesCount={totalCategoriesCount}
                 systemMessage={systemMessage}
             />
-            {/* 카테고리별 통계 차트 섹션 */}
+            {/* 카테고리별 통계 차트 */}
             <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
                 <h3 className="mb-4 text-lg font-bold text-slate-900 dark:text-slate-50">카테고리별 작성 비율</h3>
-                {/* 정제된 데이터를 클라이언트 차트 컴포넌트에 넘겨줍니다. */}
                 <CategoryChart data={chartData} />
             </div>
 
-            {/* 2. 메인 콘텐츠 영역 (최근 글 목록 & 카테고리 리스트) */}
+            {/* 메인 콘텐츠 */}
             <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-3">
                 <RecentPostsWidget posts={posts} />
 

@@ -39,7 +39,7 @@ export async function GET() {
     });
 }
 
-// [노션 자동화 웹훅] 체크박스가 바뀌면 노션이 이 POST 주소를 찌릅니다.
+// 체크박스가 변경되면 노션이 POST 호출
 export async function POST(request: NextRequest) {
     try {
         const rawBody = await request.text();
@@ -69,9 +69,9 @@ export async function POST(request: NextRequest) {
             revalidatePath(`/posts/${slug}`);
             console.log(`[Webhook] 상세 페이지 캐시 제거 완료: /posts/${slug}`);
         } else {
-            console.warn('[Webhook 경고] 갱신할 포스트의 Slug를 찾지 못했습니다.');
+            console.warn('[Webhook] 갱신할 포스트의 Slug를 찾지 못했습니다.');
         }
-        // 백엔드 캐시를 제거합니다.
+        //  캐시 제거
         revalidatePath('/', 'layout');
         revalidatePath('/posts');
 
@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
         });
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : '알 수 없는 에러';
-        console.error('[Webhook 캐시 갱신 실패]:', errorMessage);
+        console.error('[Webhook]:', errorMessage);
         return NextResponse.json({ message: '웹훅 오류' }, { status: 500 });
     }
 }

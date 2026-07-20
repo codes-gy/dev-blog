@@ -32,7 +32,6 @@ function getPureUrl(url: string | null | undefined): string {
     if (!url) return '';
     let cleaned = url.replace(/\s+/g, '').trim();
 
-    // 1. 만약 이미 Cloudinary fetch 레이어가 씌워져 있다면 알맹이(S3 주소)만 쏙 빼냅니다.
     if (cleaned.includes('image/fetch/')) {
         const parts = cleaned.split('image/fetch/');
         const realUrlPart = parts[parts.length - 1];
@@ -42,7 +41,6 @@ function getPureUrl(url: string | null | undefined): string {
         }
     }
 
-    // 2. 🌟 [핵심] %252F 같은 중복 인코딩 찌꺼기가 완전히 사라질 때까지 완전히 디코딩합니다.
     let decoded = cleaned;
     while (decoded.includes('%')) {
         try {
@@ -61,7 +59,6 @@ function getCloudinaryOgUrl(imageUrl: string | null | undefined): string {
     if (!pureUrl) return DEFAULT_OG_IMAGE;
     if (!CLOUDINARY_CLOUD_NAME) return pureUrl;
 
-    // 순수해진 S3 주소를 딱 한 번만 안전하게 인코딩하여 Cloudinary에 전달 (최적화 ON!)
     const encodedUrl = encodeURIComponent(pureUrl);
     return `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/fetch/c_fill,g_auto,w_1200,h_630,f_auto,q_auto/${encodedUrl}`;
 }
@@ -71,7 +68,6 @@ function getCloudinaryCoverUrl(imageUrl: string | null | undefined): string {
     if (!pureUrl) return DEFAULT_IMAGE;
     if (!CLOUDINARY_CLOUD_NAME) return pureUrl;
 
-    // 순수해진 S3 주소를 딱 한 번만 안전하게 인코딩하여 Cloudinary에 전달 (최적화 ON!)
     const encodedUrl = encodeURIComponent(pureUrl);
     return `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/fetch/c_fill,g_auto,w_1200,h_300,f_auto,q_auto/${encodedUrl}`;
 }
@@ -115,7 +111,7 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
 }
 
 export default async function PostDetailPage({ params }: PostPageProps) {
-    // 1. 안전하게 비동기 params 구조를 풀어 slug를 가져옵니다.
+    // params 에서 slug를 가져옴
     const { slug } = await params;
     const post = await getBlogPost(slug);
     if (!post) notFound();
@@ -123,7 +119,7 @@ export default async function PostDetailPage({ params }: PostPageProps) {
     const rawCoverUrl = cleanImageUrl(post.coverImage);
     const coverImageUrl = rawCoverUrl || DEFAULT_IMAGE;
 
-    // 2. 진입 시 조회수를 실시간으로 1 올리고 누적 데이터를 읽어옵니다.
+    // 진입 시 조회수를 실시간으로 1 증가, 누적된 데이터를 읽음
     const data = await prisma.post.findUnique({
         where: { slug },
     });
@@ -133,13 +129,13 @@ export default async function PostDetailPage({ params }: PostPageProps) {
 
     return (
         <main className="mx-auto min-h-screen max-w-6xl bg-white px-6 py-16 duration-200 dark:bg-slate-950">
-            {/* 대표 이미지 (가로 꽉 차고 세로 고정된 완벽한 배너 레이아웃) */}
-            <div className="mb-8 h-52 w-full overflow-hidden rounded-2xl shadow-sm md:h-[300px]">
+            {/* 대표 이미지 */}
+            <div className="mb-8 h-52 w-full overflow-hidden rounded-2xl shadow-sm md:h-75">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={coverImageUrl} alt={post.title} className="h-full w-full object-cover" />
             </div>
 
-            {/* 카테고리 / 작성일자 */}
+            {/* 카테고리, 작성일자 */}
             <div className="mb-6 flex w-full items-center justify-between text-sm font-semibold">
                 <div className="flex items-center gap-3">
                     <span className="rounded-full bg-blue-50 px-3 py-1 text-blue-600 dark:bg-blue-950/50 dark:text-blue-400">
@@ -155,30 +151,26 @@ export default async function PostDetailPage({ params }: PostPageProps) {
             </div>
 
             {/* 제목 */}
-            <h1 className="mb-6 text-3xl leading-tight font-extrabold text-slate-900 md:text-5xl dark:text-slate-50">
+            <h2 className="mb-6 text-2xl leading-tight font-extrabold text-slate-900 md:text-3xl dark:text-slate-50">
                 {post.title}
-            </h1>
+            </h2>
 
             {/* 요약 */}
-            <p className="mb-10 border-l-4 border-blue-500 py-1 pl-4 text-lg text-slate-600 italic dark:text-slate-400">
+            <p className="mb-10 border-l-4 border-blue-500 py-1 pl-4 text-lg text-slate-600 dark:text-slate-400">
                 {post.description}
             </p>
 
             <hr className="mb-10 border-slate-200 dark:border-slate-800" />
 
-            {/* 본문 내용 html 렌더링 */}
+            {/* 본문 */}
             <PostContentBody contentHtml={content} />
 
             <hr className="mt-16 mb-10 border-slate-200 dark:border-slate-800" />
 
-            {/* [추가] 본문 하단 전용 구글 애드센스 광고 배치
-                - slot 값은 나중에 광고가 승인된 후 애드센스 대시보드에서 '신규 광고 단위 생성'을 통해 생성된 10자리 숫자를 넣어주시면 됩니다. 우선은 아무 임의 숫자나 비워두셔도 심사용으로는 문제 없습니다.
-            */}
+            {/* 본문 하단 전용 구글 애드센스 광고 */}
             <AdSenseInArticle />
 
-            {/*
-            소셜 공유 버튼 섹션 배치 개발중으로 hidden 처리 작업 후 제거
-            */}
+            {/* 소셜 공유 버튼 섹션 배치 개발중으로 hidden 처리 */}
             <div className="mt-10 hidden border-b border-slate-100 pb-8 dark:border-slate-800/60">
                 <ShareButtons
                     slug={slug}
@@ -188,15 +180,15 @@ export default async function PostDetailPage({ params }: PostPageProps) {
                 />
             </div>
 
-            {/* 좋아요 섹션 */}
+            {/* 좋아요 */}
             <div className="mt-12 flex flex-col items-center justify-center gap-3 border-t border-slate-100 pt-10 dark:border-slate-800/60">
-                <p className="text-xs font-semibold tracking-wide text-slate-400 dark:text-slate-500">
+                <p className="text-xs font-semibold tracking-wide text-slate-500 dark:text-slate-300">
                     이 글이 유익했다면 좋아요를 남겨주세요!
                 </p>
                 <LikeButton slug={slug} initialLikes={initialLikes} />
             </div>
 
-            {/* 댓글 섹션 */}
+            {/* 댓글 */}
             <Comments postSlug={slug} />
         </main>
     );

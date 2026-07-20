@@ -1,4 +1,3 @@
-// 💡 최상단에 이 컴포넌트는 브라우저에서 돌아간다고 명시합니다.
 'use client';
 
 import React from 'react';

@@ -1,4 +1,3 @@
-// src/components/posts/SearchInput.tsx
 'use client';
 
 import { useState } from 'react';
@@ -11,14 +10,11 @@ export default function SearchInput() {
     const currentSearch = searchParams.get('search') || '';
     const currentTag = searchParams.get('tag') || '전체';
 
-    // 입력값을 담는 핵심 로컬 상태
     const [text, setText] = useState(currentSearch);
 
-    // 이전 태그와 이전 검색어 상태를 기억해두는 백업 상태
     const [prevTag, setPrevTag] = useState(currentTag);
     const [prevSearch, setPrevSearch] = useState(currentSearch);
 
-    // 렌더링 흐름 속에서 상태를 즉시 동기화 (useEffect 대체 패턴)
     if (currentTag !== prevTag || currentSearch !== prevSearch) {
         setPrevTag(currentTag);
         setPrevSearch(currentSearch);
@@ -54,7 +50,6 @@ export default function SearchInput() {
 
     return (
         <form onSubmit={handleSubmit} className="relative w-full">
-            {/* 왼쪽 배치 */}
             <div className="pointer-events-none absolute inset-y-0 left-4 flex items-center text-slate-400 dark:text-slate-500">
                 <svg
                     className={`h-5 w-5 transition-colors duration-200 ${text ? 'text-emerald-500 dark:text-emerald-400' : ''}`}
@@ -72,7 +67,6 @@ export default function SearchInput() {
                 </svg>
             </div>
 
-            {/* 테두리 두께 확장, 입체적인 그림자, 민트 포커스 링 적용 */}
             <input
                 type="text"
                 value={text}
@@ -90,7 +84,6 @@ export default function SearchInput() {
                 className="dark:border-slate-750 w-full rounded-2xl border border-slate-300 bg-white py-3.5 pr-12 pl-12 text-sm text-slate-900 shadow-md transition-all duration-200 outline-none placeholder:text-slate-400/90 hover:border-slate-400 hover:shadow-lg focus:border-emerald-500 focus:ring-4 focus:shadow-emerald-500/5 focus:ring-emerald-500/10 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500 dark:hover:border-slate-600 dark:hover:shadow-black/40 dark:focus:border-emerald-500 dark:focus:ring-emerald-400/10"
             />
 
-            {/* 오른쪽 배치: 검색어가 존재할 때 활성화되는 초기화 버튼 */}
             {text && (
                 <div className="absolute inset-y-0 right-4 flex items-center">
                     <button

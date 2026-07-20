@@ -1,43 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-
-interface ShareButtonsProps {
-    slug: string;
-    title: string;
-    description: string;
-    coverImage: string;
-}
-
-interface KakaoShareContent {
-    title: string;
-    description: string;
-    imageUrl: string;
-    link: {
-        mobileWebUrl: string;
-        webUrl: string;
-    };
-}
-
-interface KakaoShareButton {
-    title: string;
-    link: {
-        mobileWebUrl: string;
-        webUrl: string;
-    };
-}
-
-interface KakaoSDK {
-    init: (apiKey: string) => void;
-    isInitialized: () => boolean;
-    Share: {
-        sendDefault: (options: {
-            objectType: 'feed';
-            content: KakaoShareContent;
-            buttons?: KakaoShareButton[];
-        }) => void;
-    };
-}
+import { ShareButtonsProps } from '@/src/types/notion';
 
 export default function ShareButtons({ slug, title, description, coverImage }: ShareButtonsProps) {
     const [copied, setCopied] = useState(false);
@@ -91,13 +55,11 @@ export default function ShareButtons({ slug, title, description, coverImage }: S
 
         const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
         if (isMobile) {
-            // 모바일일 때는 새창을 띄우지 않고, 알림창(Confirm)으로 의사를 물어봅니다.
             const userConfirmed = window.confirm('페이스북 앱 또는 웹으로 이동하여 이 글을 공유하시겠습니까?');
             if (userConfirmed) {
-                // 확인을 누르면 새 탭(_blank)으로 깔끔하게 이동시킵니다.
                 window.open(facebookShareUrl, '_blank');
             }
-            return; // 모바일 로직 종료
+            return;
         }
     };
 
@@ -118,7 +80,7 @@ export default function ShareButtons({ slug, title, description, coverImage }: S
                 소셜 공유하기
             </span>
             <div className="flex items-center gap-3">
-                {/* 1. 카카오톡 버튼 (공식 카카오 심볼 말풍선 SVG 주입) 💬 */}
+                {/* 카카오톡 */}
                 <button
                     onClick={shareToKakao}
                     className="flex h-10 w-10 items-center justify-center rounded-full bg-[#FEE500] text-[#191919] shadow-sm transition hover:scale-105 active:scale-95"
@@ -129,7 +91,7 @@ export default function ShareButtons({ slug, title, description, coverImage }: S
                     </svg>
                 </button>
 
-                {/* 2. 페이스북 버튼 (공식 페이스북 f 로고 SVG 주입) 🌐 */}
+                {/* 페이스북 */}
                 <button
                     onClick={shareToFacebook}
                     className="flex h-10 w-10 items-center justify-center rounded-full bg-[#1877F2] text-white shadow-sm transition hover:scale-105 active:scale-95"
@@ -140,7 +102,7 @@ export default function ShareButtons({ slug, title, description, coverImage }: S
                     </svg>
                 </button>
 
-                {/* 3. URL 복사 버튼 (기존 동일) */}
+                {/* URL 복사 */}
                 <button
                     onClick={copyToClipboard}
                     className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:scale-105 hover:border-slate-300 active:scale-95 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:border-slate-700"
@@ -170,10 +132,4 @@ export default function ShareButtons({ slug, title, description, coverImage }: S
             )}
         </div>
     );
-}
-
-declare global {
-    interface Window {
-        Kakao?: KakaoSDK;
-    }
 }
