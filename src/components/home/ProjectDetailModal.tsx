@@ -122,7 +122,13 @@ export default function ProjectDetailModal({
                                 <div>
                                     <span className="font-semibold text-rose-600 dark:text-rose-400">문제: </span>
                                     <span className="text-slate-600 dark:text-slate-400">
-                                        {details.troubleshooting.problem}
+                                        {details.troubleshooting.situation}
+                                    </span>
+                                </div>
+                                <div>
+                                    <span className="font-semibold text-rose-600 dark:text-rose-400">목표: </span>
+                                    <span className="text-slate-600 dark:text-slate-400">
+                                        {details.troubleshooting.task}
                                     </span>
                                 </div>
                                 <div>
