@@ -17,29 +17,14 @@ export function escapeHtml(text: string): string {
         .replaceAll("'", '&#039;');
 }
 
-export function formatDate(dateString: string): string {
-    try {
-        const date = new Date(dateString);
-        return new Intl.DateTimeFormat('ko-KR', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-        }).format(date); // 예시 결과: 2026년 6월 10일
-    } catch {
-        return dateString;
-    }
-}
-
 export function getText(prop: PageProperty | undefined): string {
     if (!prop) return '';
 
     if (prop.type === 'title') {
-        //return prop.title[0]?.plain_text ?? '';
         return prop.title.map((t) => t.plain_text).join('');
     }
 
     if (prop.type === 'rich_text') {
-        //return prop.rich_text[0]?.plain_text ?? '';
         return prop.rich_text.map((t) => t.plain_text).join('');
     }
 

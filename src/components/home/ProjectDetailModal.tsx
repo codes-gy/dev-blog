@@ -57,7 +57,7 @@ export default function ProjectDetailModal({
                 className="relative max-h-[85vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl md:p-8 dark:border-slate-800 dark:bg-slate-900"
                 onClick={(e) => e.stopPropagation()} // 모달 내부 클릭 시 닫힘 방지
             >
-                {/* 닫기 버튼 */}
+                {/* 닫기 */}
                 <button
                     type="button"
                     onClick={onClose}
@@ -66,7 +66,7 @@ export default function ProjectDetailModal({
                     <X className="h-5 w-5" />
                 </button>
 
-                {/* 모달 헤더 */}
+                {/* 헤더 */}
                 <div className="mb-6 pr-8">
                     <span
                         className={`mb-2 inline-block rounded border px-2.5 py-0.5 text-[11px] font-bold ${statusClassName}`}
@@ -76,7 +76,7 @@ export default function ProjectDetailModal({
                     <h3 className="text-xl font-bold text-slate-900 md:text-2xl dark:text-slate-50">{title}</h3>
                 </div>
 
-                {/* 수치적 성과 하이라이트 (Metrics) */}
+                {/* 성과 */}
                 {details.metrics && details.metrics.length > 0 && (
                     <div className="mb-6 grid grid-cols-2 gap-3 rounded-xl border border-blue-100 bg-blue-50/70 p-4 md:grid-cols-3 dark:border-blue-900/50 dark:bg-blue-950/40">
                         {details.metrics.map((metric, idx) => (
@@ -122,7 +122,13 @@ export default function ProjectDetailModal({
                                 <div>
                                     <span className="font-semibold text-rose-600 dark:text-rose-400">문제: </span>
                                     <span className="text-slate-600 dark:text-slate-400">
-                                        {details.troubleshooting.problem}
+                                        {details.troubleshooting.situation}
+                                    </span>
+                                </div>
+                                <div>
+                                    <span className="font-semibold text-rose-600 dark:text-rose-400">목표: </span>
+                                    <span className="text-slate-600 dark:text-slate-400">
+                                        {details.troubleshooting.task}
                                     </span>
                                 </div>
                                 <div>

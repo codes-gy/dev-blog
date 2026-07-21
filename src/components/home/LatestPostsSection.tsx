@@ -18,7 +18,7 @@ export default function LatestPostsSection({ posts }: LatestPostsSectionProps) {
                     href="/posts"
                     className="flex items-center gap-1 text-sm font-bold text-blue-600 hover:underline dark:text-blue-400"
                 >
-                    전체 글 보기 →
+                    전체 글 보기
                 </Link>
             </div>
 

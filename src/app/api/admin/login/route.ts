@@ -6,7 +6,7 @@ import { LRUCache } from 'lru-cache';
 // IP별 로그인 시도 횟수를 기억할 메모리 공간 설정
 const rateLimiter = new LRUCache<string, number>({
     max: 500,
-    ttl: 60 * 1000, // 1분 (Millisecond 단위)
+    ttl: 60 * 1000, // 1분
 });
 
 export async function GET(request: NextRequest) {
@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
     try {
         // 디도스 및 비밀번호 무작위 대입 공격 방어
-        // 클라이언트의 IP 주소를 식별자로 사용 (추적 불가 시 기본값 할당)
+        // 클라이언트의 IP 주소를 식별자로 사용
         const ip = request.headers.get('x-forwarded-for') || 'unknown-ip';
         const currentAttempts = rateLimiter.get(ip) || 0;
 
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
 
         const isPasswordMatch = await bcrypt.compare(password, adminPassword);
         if (!isPasswordMatch) {
-            // 로그인 실패 시 해당 IP의 시도 횟수를 1 올림.
+            // 로그인 실패 시 해당 IP의 시도 횟수를 1 올림
             rateLimiter.set(ip, currentAttempts + 1);
             return NextResponse.json({ message: '비밀번호가 일치하지 않습니다.' }, { status: 401 });
         }
@@ -70,8 +70,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ message: 'JWT 보안 키가 설정되지 않았습니다.' }, { status: 500 });
         }
 
-        // jsonwebtoken을 사용한 토큰 발급 (유효기간 1일)
-        // 인코딩할 페이로드와 비밀키, 옵션을 전달합니다.
+        // 토큰 발급
         const token = jwt.sign(
             {
                 role: 'admin',
@@ -105,7 +104,7 @@ export async function DELETE() {
     try {
         const response = NextResponse.json({ success: true, message: '로그아웃 성공' }, { status: 200 });
 
-        // 브라우저의 쿠키를 즉시 삭제(만료)시킵니다.
+        // 브라우저의 쿠키를 즉시 삭제
         response.cookies.set({
             name: 'admin_token',
             value: '',

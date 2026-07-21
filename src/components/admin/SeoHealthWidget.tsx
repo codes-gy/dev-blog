@@ -10,7 +10,6 @@ interface SeoHealthWidgetProps {
 export default function SeoHealthWidget({ posts }: SeoHealthWidgetProps) {
     const [showDetail, setShowDetail] = useState(false);
 
-    // 1. API가 채워넣은 기본값 문자열까지 '누락'으로 정밀 검사
     const missingTitles = posts.filter((post) => !post.title || post.title.trim() === '' || post.title === '제목 없음');
     const missingSlugs = posts.filter((post) => !post.slug || post.slug.trim() === '');
     const missingSummaries = posts.filter(
@@ -24,7 +23,6 @@ export default function SeoHealthWidget({ posts }: SeoHealthWidgetProps) {
             post.category === '카테고리 없음',
     );
 
-    // 2. 종합 관리 대상 글 목록 추출 (하나라도 걸리면 포함)
     const issuePosts = posts.filter((post) => {
         const isTitleMissing = !post.title || post.title.trim() === '' || post.title === '제목 없음';
         const isSlugMissing = !post.slug || post.slug.trim() === '';
@@ -39,14 +37,12 @@ export default function SeoHealthWidget({ posts }: SeoHealthWidgetProps) {
         return isTitleMissing || isSlugMissing || isSummaryMissing || isCategoryMissing;
     });
 
-    // 3. 건강도 점수 연산 (항목별 감점 점수 적용)
     const totalIssueCount =
         missingTitles.length + missingSlugs.length + missingSummaries.length + missingCategories.length;
     const healthScore = Math.max(0, 100 - totalIssueCount * 4);
 
     return (
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-            {/* 상단 헤더 및 점수 */}
             <div className="mb-4 flex items-center justify-between">
                 <div>
                     <h3 className="text-lg font-bold text-slate-900 dark:text-slate-50">🔍 SEO 메타데이터 진단</h3>
@@ -65,25 +61,24 @@ export default function SeoHealthWidget({ posts }: SeoHealthWidgetProps) {
                 </span>
             </div>
 
-            {/* 📊 4가지 영역 정밀 체크 리스트 */}
             <div className="space-y-3 border-b border-slate-100 pb-4 dark:border-slate-800">
                 <div className="flex items-center justify-between text-xs">
-                    <span className="text-slate-500 dark:text-slate-400">📝 제목 (Title) 누락</span>
+                    <span className="text-slate-500 dark:text-slate-400">📝 제목 누락</span>
                     <span className={`font-semibold ${missingTitles.length > 0 ? 'text-rose-500' : 'text-slate-400'}`}>
                         {missingTitles.length > 0 ? `🚨 ${missingTitles.length}건` : '✅ 정상'}
                     </span>
                 </div>
 
                 <div className="flex items-center justify-between text-xs">
-                    <span className="text-slate-500 dark:text-slate-400">🔗 슬러그 (Slug/URL) 누락</span>
-                    {/* 💡 접속 불가 치명적 오류이므로 text-rose-500과 🚨 이모지로 변경 */}
+                    <span className="text-slate-500 dark:text-slate-400">🔗 URL 누락</span>
+
                     <span className={`font-semibold ${missingSlugs.length > 0 ? 'text-rose-500' : 'text-slate-400'}`}>
                         {missingSlugs.length > 0 ? `🚨 ${missingSlugs.length}건` : '✅ 정상'}
                     </span>
                 </div>
 
                 <div className="flex items-center justify-between text-xs">
-                    <span className="text-slate-500 dark:text-slate-400">📄 요약 (Summary) 누락</span>
+                    <span className="text-slate-500 dark:text-slate-400">📄 요약 누락</span>
                     <span
                         className={`font-semibold ${missingSummaries.length > 0 ? 'text-amber-500' : 'text-slate-400'}`}
                     >
@@ -92,7 +87,7 @@ export default function SeoHealthWidget({ posts }: SeoHealthWidgetProps) {
                 </div>
 
                 <div className="flex items-center justify-between text-xs">
-                    <span className="text-slate-500 dark:text-slate-400">📂 카테고리 (Category) 미분류</span>
+                    <span className="text-slate-500 dark:text-slate-400">📂 카테고리 미분류</span>
                     <span
                         className={`font-semibold ${missingCategories.length > 0 ? 'text-amber-500' : 'text-slate-400'}`}
                     >
@@ -101,7 +96,6 @@ export default function SeoHealthWidget({ posts }: SeoHealthWidgetProps) {
                 </div>
             </div>
 
-            {/* 💡 진단 분석 피드백 & 아코디언 상세 보기 */}
             <div className="mt-4">
                 {issuePosts.length > 0 ? (
                     <div>
@@ -117,7 +111,6 @@ export default function SeoHealthWidget({ posts }: SeoHealthWidgetProps) {
                             </button>
                         </div>
 
-                        {/* 아코디언 상세 내용 리스트 */}
                         {showDetail && (
                             <div className="mt-2 max-h-32 space-y-1 overflow-y-auto rounded-xl border border-slate-100 bg-slate-50 p-2 text-[11px] dark:border-slate-800/60 dark:bg-slate-950/40">
                                 {issuePosts.map((post) => {
@@ -159,8 +152,7 @@ export default function SeoHealthWidget({ posts }: SeoHealthWidgetProps) {
                     </div>
                 ) : (
                     <div className="rounded-xl border border-emerald-100/50 bg-emerald-50/50 p-3 text-[11px] font-medium text-emerald-600 dark:border-emerald-900/30 dark:bg-emerald-950/10 dark:text-emerald-400">
-                        🎉 완벽합니다! 모든 게시글의 필수 메타데이터(제목, 슬러그, 요약, 카테고리)가 정상 등록되어
-                        최상의 SEO 상태를 유지하고 있습니다.
+                        모든 게시글의 필수 메타데이터가 정상 등록되어 SEO 상태를 유지하고 있습니다.
                     </div>
                 )}
             </div>

@@ -50,10 +50,16 @@ export const NOTION_BG_STYLES: Record<string, { light: string; dark: string }> =
     },
 };
 
-const highlighterPromise = createHighlighter({
-    themes: ['github-light', 'github-dark-dimmed'],
-    langs: ['typescript', 'javascript', 'python', 'html', 'css', 'json', 'bash', 'markdown', 'tsx'],
-});
+let cachedHighlighter: Highlighter | null = null;
+async function getHighlighterInstance() {
+    if (!cachedHighlighter) {
+        cachedHighlighter = await createHighlighter({
+            themes: ['github-light', 'github-dark-dimmed'],
+            langs: ['typescript', 'javascript', 'python', 'html', 'css', 'json', 'bash', 'markdown', 'tsx'],
+        });
+    }
+    return cachedHighlighter;
+}
 
 export function renderRichText(richTextArray: NotionRichTextItem[]): string {
     if (!richTextArray) return '';
@@ -61,7 +67,6 @@ export function renderRichText(richTextArray: NotionRichTextItem[]): string {
         .map((t) => {
             let text = escapeHtml(t.plain_text);
 
-            // 서식 적용
             if (t.annotations.bold) text = `<strong>${text}</strong>`;
             if (t.annotations.italic) text = `<em>${text}</em>`;
             if (t.annotations.strikethrough) text = `<del>${text}</del>`;
@@ -70,7 +75,6 @@ export function renderRichText(richTextArray: NotionRichTextItem[]): string {
                 text = `<code class="px-1.5 py-0.5 mx-0.5 rounded bg-slate-100 dark:bg-slate-800 text-rose-600 dark:text-rose-400 font-mono text-sm border border-slate-200 dark:border-slate-700">${text}</code>`;
             }
 
-            // 링크 처리
             if (t.href) {
                 text = `<a href="${t.href}" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 underline hover:text-blue-800">${text}</a>`;
             }
@@ -80,7 +84,6 @@ export function renderRichText(richTextArray: NotionRichTextItem[]): string {
         .join('');
 }
 
-// 자식 노드가 뚫려있는 블록 데이터를 다루기 위한 서브 렌더러 함수
 function renderBlocksToHtml(blocks: BlockObjectResponse[], highlighter: Highlighter): string {
     let html = '';
     let isInsideList = false;
@@ -106,14 +109,14 @@ function renderBlocksToHtml(blocks: BlockObjectResponse[], highlighter: Highligh
             case 'heading_1': {
                 if (typedBlock.type !== 'heading_1') continue;
                 const text = renderRichText(typedBlock.heading_1.rich_text as NotionRichTextItem[]);
-                html += `<h1 class="text-3xl font-bold my-6 text-slate-900 dark:text-slate-50">${text}</h1>`;
+                html += `<h1 class="text-2xl font-bold my-6 text-slate-900 dark:text-slate-50">${text}</h1>`;
                 break;
             }
 
             case 'heading_2': {
                 if (typedBlock.type !== 'heading_2') continue;
                 const text = renderRichText(typedBlock.heading_2.rich_text as NotionRichTextItem[]);
-                html += `<h2 class="text-2xl font-bold mt-8 mb-4 text-slate-800 dark:text-slate-100 block" 
+                html += `<h2 class="text-xl font-bold mt-8 mb-4 text-slate-800 dark:text-slate-100 block" 
                         style="display: block !important; visibility: visible !important;">
                             ${text}
                         </h2>`;
@@ -123,7 +126,7 @@ function renderBlocksToHtml(blocks: BlockObjectResponse[], highlighter: Highligh
             case 'heading_3': {
                 if (typedBlock.type !== 'heading_3') continue;
                 const text = renderRichText(typedBlock.heading_3.rich_text as NotionRichTextItem[]);
-                html += `<h3 class="text-xl font-bold mt-6 mb-3 text-slate-800 dark:text-slate-200 block" style="display: block !important; visibility: visible !important;">${text}</h3>`;
+                html += `<h3 class="text-lg font-bold mt-6 mb-3 text-slate-800 dark:text-slate-200 block" style="display: block !important; visibility: visible !important;">${text}</h3>`;
                 break;
             }
 
@@ -178,7 +181,6 @@ function renderBlocksToHtml(blocks: BlockObjectResponse[], highlighter: Highligh
             }
 
             case 'image': {
-                // 노션 API에서 준 이미지 블록의 내부 데이터 타입을 안전하게 꺼내기 위해 unknown 캐스팅 활용
                 const imageBlock = block as unknown as {
                     type: 'image';
                     image:
@@ -194,14 +196,12 @@ function renderBlocksToHtml(blocks: BlockObjectResponse[], highlighter: Highligh
                 let imageUrl = '';
                 const imgData = imageBlock.image;
 
-                // 1. 이미지 URL 추출 (외부 링크 vs 직접 업로드 파일)
                 if (imgData.type === 'external') {
                     imageUrl = imgData.external.url;
                 } else if (imgData.type === 'file') {
                     imageUrl = imgData.file.url;
                 }
 
-                // 2. URL이 정상적으로 존재할 때만 HTML 태그 생성
                 if (imageUrl) {
                     html += `
                                     <div class="my-6 flex flex-col items-center justify-center">
@@ -228,7 +228,6 @@ function renderBlocksToHtml(blocks: BlockObjectResponse[], highlighter: Highligh
 
                 let highlightedHtml = '';
                 try {
-                    // 💡 단일 CSS 변수 대신 라이트/다크 듀얼 테마를 직접 지정합니다.
                     highlightedHtml = highlighter.codeToHtml(codeContent, {
                         lang: language,
                         themes: {
@@ -236,7 +235,8 @@ function renderBlocksToHtml(blocks: BlockObjectResponse[], highlighter: Highligh
                             dark: 'github-dark-dimmed',
                         },
                     });
-                } catch (err) {
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                } catch (error) {
                     highlightedHtml = `<pre><code>${escapeHtml(codeContent)}</code></pre>`;
                 }
 
@@ -257,10 +257,8 @@ function renderBlocksToHtml(blocks: BlockObjectResponse[], highlighter: Highligh
 
                 const calloutData = typedBlock.callout;
 
-                // 1. 텍스트 내 서식 복원
                 const text = renderRichText(calloutData.rich_text as NotionRichTextItem[]);
 
-                // 2. Tailwind 우회를 위한 고유 HEX 코드 변수 추출
                 const notionColorKey = calloutData.color === 'default' ? 'default_background' : calloutData.color;
                 const colorStyle =
                     NOTION_BG_STYLES[notionColorKey] ||
@@ -272,20 +270,18 @@ function renderBlocksToHtml(blocks: BlockObjectResponse[], highlighter: Highligh
                 const bgDark =
                     colorStyle?.dark?.match(/background-color:\s*([^;]+)/)?.[1] || 'rgba(255, 255, 255, 0.05)';
                 const textDark = colorStyle?.dark?.match(/color:\s*([^;]+)/)?.[1] || '#e3e3e3';
-
-                const inlineStyles = `
+                `
         --nbg-l: ${bgLight}; --ntx-l: ${textLight};
         --nbg-d: ${bgDark}; --ntx-d: ${textDark};
     `.trim();
-
                 let iconHtml = '';
                 if (calloutData.icon) {
                     if (calloutData.icon.type === 'emoji') {
-                        iconHtml = `<span class="text-xl flex-shrink-0 select-none">${calloutData.icon.emoji}</span>`;
+                        iconHtml = `<span class="text-xl shrink-0 select-none">${calloutData.icon.emoji}</span>`;
                     } else if (calloutData.icon.type === 'external') {
-                        iconHtml = `<img src="${calloutData.icon.external.url}" class="w-5 h-5 object-contain flex-shrink-0" alt="icon" />`;
+                        iconHtml = `<img src="${calloutData.icon.external.url}" class="w-5 h-5 object-contain shrink-0" alt="icon" />`;
                     } else if (calloutData.icon.type === 'file') {
-                        iconHtml = `<img src="${calloutData.icon.file.url}" class="w-5 h-5 object-contain flex-shrink-0" alt="icon" />`;
+                        iconHtml = `<img src="${calloutData.icon.file.url}" class="w-5 h-5 object-contain shrink-0" alt="icon" />`;
                     }
                 }
 
@@ -294,7 +290,6 @@ function renderBlocksToHtml(blocks: BlockObjectResponse[], highlighter: Highligh
                     childrenHtml = `<div class="mt-2 space-y-1 notion-callout-children">${renderBlocksToHtml(calloutData.children, highlighter)}</div>`;
                 }
 
-                // 3. 인라인 스타일 주입 구조로 가공하여 렌더링
                 html += `
     <div class="my-4 flex gap-3 p-4 rounded-xl border
                 border-slate-200/50 dark:border-slate-800/30
@@ -363,10 +358,8 @@ function renderBlocksToHtml(blocks: BlockObjectResponse[], highlighter: Highligh
             case 'quote': {
                 if (typedBlock.type !== 'quote') continue;
 
-                // 1. 인용문 텍스트 내 서식(볼드, 링크 등) 복원
                 const text = renderRichText(typedBlock.quote.rich_text as NotionRichTextItem[]);
 
-                // 2. 텍스트가 비어있지 않을 때만 HTML 생성
                 if (text.trim() !== '') {
                     html += `
             <blockquote class="my-6 pl-4 border-l-4 border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-400 text-base md:text-lg leading-8">
@@ -401,9 +394,8 @@ function renderBlocksToHtml(blocks: BlockObjectResponse[], highlighter: Highligh
 
 export async function getPostContent(blockId: string): Promise<string> {
     try {
-        const highlighter = await highlighterPromise;
+        const highlighter = await getHighlighterInstance();
 
-        // 모든 블록을 담을 배열과 페이징 처리를 위한 변수 선언
         async function fetchAllChildBlocks(id: string): Promise<BlockObjectResponse[]> {
             const blocks: BlockObjectResponse[] = [];
             let hasMore = true;

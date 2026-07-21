@@ -97,3 +97,51 @@ export interface ExtendedBlockObjectResponse extends Omit<BlockObjectResponse, '
 
     [key: string]: unknown; // any 대신 안전한 unknown 사용
 }
+
+export interface ShareButtonsProps {
+    slug: string;
+    title: string;
+    description: string;
+    coverImage: string;
+}
+
+export interface KakaoShareContent {
+    title: string;
+    description: string;
+    imageUrl: string;
+    link: {
+        mobileWebUrl: string;
+        webUrl: string;
+    };
+}
+
+export interface KakaoShareButton {
+    title: string;
+    link: {
+        mobileWebUrl: string;
+        webUrl: string;
+    };
+}
+
+export interface KakaoSDK {
+    init: (apiKey: string) => void;
+    isInitialized: () => boolean;
+    Share: {
+        sendDefault: (options: {
+            objectType: 'feed';
+            content: KakaoShareContent;
+            buttons?: KakaoShareButton[];
+        }) => void;
+    };
+}
+
+export interface AdsByGooglePush {
+    (obj: Record<string, never>): void;
+}
+
+declare global {
+    interface Window {
+        adsbygoogle?: AdsByGooglePush[] | Record<string, unknown>[];
+        Kakao?: KakaoSDK;
+    }
+}

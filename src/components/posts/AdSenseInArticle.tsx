@@ -1,22 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useMounted } from '@/src/hooks/useMounted';
 
-// 🎯 고유값 고정 (지근영 님의 애드센스 정보)
-const ADSENSE_CLIENT = 'ca-pub-3527850742207812';
-// FIXME: 심사 승인 후 발급받은 실제 10자리 광고 슬롯 번호로 변경!
-const ADSENSE_SLOT = '1234567890';
-
-interface AdsByGooglePush {
-    (obj: Record<string, never>): void;
-}
-
-declare global {
-    interface Window {
-        adsbygoogle?: AdsByGooglePush[] | Record<string, unknown>[];
-    }
-}
+const ADSENSE_CLIENT = process.env.GOOGLE_ADSENSE_CLIENT || '';
+const ADSENSE_SLOT = process.env.GOOGLE_ADSENSE_SLOT || '';
 
 export default function AdSenseInArticle() {
     const isMounted = useMounted();

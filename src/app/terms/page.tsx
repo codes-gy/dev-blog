@@ -4,7 +4,7 @@ export default function TermsPage() {
     return (
         <div className="min-h-screen bg-slate-50 px-4 py-8 md:px-6 md:py-16 dark:bg-slate-950">
             <article className="mx-auto max-w-6xl rounded-xl border border-slate-200 bg-white px-4 py-5 shadow-sm md:rounded-2xl md:p-12 dark:border-slate-800 dark:bg-slate-900">
-                {/* 🏷️ 상단 헤더 영역 */}
+                {/* 상단 헤더 */}
                 <header className="border-b border-slate-100 pb-4 dark:border-slate-800">
                     <h1 className="text-base font-bold tracking-tight text-slate-900 md:text-3xl dark:text-slate-50">
                         서비스 이용약관
@@ -14,9 +14,8 @@ export default function TermsPage() {
                     </p>
                 </header>
 
-                {/* 법적 필수 본문 서술 영역 */}
+                {/* 법적 필수 본문 */}
                 <div className="mt-5 flex flex-col gap-5 text-[13px] leading-relaxed text-slate-600 md:mt-10 md:gap-8 md:text-base dark:text-slate-300">
-                    {/* 제 1 조 */}
                     <section>
                         <h2 className="mb-1 text-[13px] font-bold text-slate-800 md:mb-2 md:text-lg dark:text-slate-200">
                             제 1 조 (목적)
@@ -28,7 +27,6 @@ export default function TermsPage() {
                         </p>
                     </section>
 
-                    {/* 제 2 조 */}
                     <section>
                         <h2 className="mb-1 text-[13px] font-bold text-slate-800 md:mb-2 md:text-lg dark:text-slate-200">
                             제 2 조 (약관의 효력 및 변경)
@@ -47,7 +45,6 @@ export default function TermsPage() {
                         </div>
                     </section>
 
-                    {/* 제 3 조 */}
                     <section>
                         <h2 className="mb-1 text-[13px] font-bold text-slate-800 md:mb-2 md:text-lg dark:text-slate-200">
                             제 3 조 (용어의 정의)
@@ -64,7 +61,6 @@ export default function TermsPage() {
                         </div>
                     </section>
 
-                    {/* 제 4 조 */}
                     <section>
                         <h2 className="mb-1 text-[13px] font-bold text-slate-800 md:mb-2 md:text-lg dark:text-slate-200">
                             제 4 조 (서비스의 제공 및 이용제한)
@@ -82,7 +78,6 @@ export default function TermsPage() {
                         </div>
                     </section>
 
-                    {/* 제 5 조 */}
                     <section>
                         <h2 className="mb-1 text-[13px] font-bold text-slate-800 md:mb-2 md:text-lg dark:text-slate-200">
                             제 5 조 (이용자의 게시물 및 저작권)
@@ -105,7 +100,6 @@ export default function TermsPage() {
                         </div>
                     </section>
 
-                    {/* 제 6 조 */}
                     <section>
                         <h2 className="mb-1 text-[13px] font-bold text-slate-800 md:mb-2 md:text-lg dark:text-slate-200">
                             제 6 조 (광고 게재에 관한 조항)
@@ -119,7 +113,6 @@ export default function TermsPage() {
                         </div>
                     </section>
 
-                    {/* 제 7 조 */}
                     <section>
                         <h2 className="mb-1 text-[13px] font-bold text-slate-800 md:mb-2 md:text-lg dark:text-slate-200">
                             제 7 조 (운영자의 면책 및 책임 제한)
@@ -137,7 +130,6 @@ export default function TermsPage() {
                         </div>
                     </section>
 
-                    {/* 제 8 조 */}
                     <section>
                         <h2 className="mb-1 text-[13px] font-bold text-slate-800 md:mb-2 md:text-lg dark:text-slate-200">
                             제 8 조 (준거법 및 관할법원)
@@ -149,8 +141,8 @@ export default function TermsPage() {
                     </section>
                 </div>
 
-                {/* 메인으로 돌아가기 버튼 */}
                 <footer className="mt-6 border-t border-slate-100 pt-4 text-center md:mt-12 md:pt-8 dark:border-slate-800">
+                    {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
                     <a
                         href="/"
                         className="inline-flex items-center justify-center rounded-xl border-2 border-slate-300 bg-white px-6 py-2.5 text-[12px] font-bold text-slate-700 shadow-sm transition-all duration-200 hover:border-slate-400 hover:bg-slate-100 hover:text-slate-900 active:scale-[0.98] md:px-8 md:py-3 md:text-base dark:border-slate-700 dark:bg-slate-950 dark:text-slate-300 dark:hover:border-slate-500 dark:hover:bg-slate-900 dark:hover:text-slate-50"

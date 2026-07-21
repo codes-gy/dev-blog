@@ -19,7 +19,8 @@ export interface ProjectCardProps {
         features: string[];
         // 트러블슈팅 경험
         troubleshooting?: {
-            problem: string;
+            situation: string;
+            task: string;
             action: string;
             result: string;
         };

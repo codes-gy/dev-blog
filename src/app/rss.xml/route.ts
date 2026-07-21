@@ -15,7 +15,7 @@ export async function GET() {
 <channel>
     <title>DevLog.io | 개발자 기술 블로그</title>
     <link>${baseUrl}</link>
-    <description>Next.js로 작성한 개발 및 에러 핸들링 블로그입니다.</description>
+    <description>Next.js로 작성한 개발 블로그입니다.</description>
     <language>ko</language>
     <atom:link href="${baseUrl}/rss.xml" rel="self" type="application/rss+xml" />
 `;

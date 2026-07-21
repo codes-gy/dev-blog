@@ -9,7 +9,6 @@ export async function GET() {
             },
         });
 
-        // BigInt 타입을 JSON에서 다룰 수 있도록 문자열로 변환
         const serializedContacts = contacts.map((item) => ({
             ...item,
             id: item.id.toString(),
@@ -44,7 +43,6 @@ export async function POST(request: Request) {
             );
         }
 
-        // 💡 Prisma를 사용해 PostgreSQL에 저장
         const newContact = await prisma.contact.create({
             data: {
                 name,
@@ -54,7 +52,6 @@ export async function POST(request: Request) {
             },
         });
 
-        // 💡 BigInt 타입은 JSON.stringify할 때 에러가 나므로, 안전하게 id를 문자열로 바꿔서 응답합니다.
         return NextResponse.json(
             {
                 success: true,
@@ -83,7 +80,6 @@ export async function PATCH(request: Request) {
             return NextResponse.json({ success: false, message: '요청 ID가 누락되었습니다.' }, { status: 400 });
         }
 
-        // Prisma 데이터 업데이트 (id가 BigInt인 경우를 고려해 BigInt(id)로 변환)
         const updatedContact = await prisma.contact.update({
             where: {
                 id: BigInt(id),

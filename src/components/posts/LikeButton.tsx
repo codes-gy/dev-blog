@@ -29,16 +29,13 @@ export default function LikeButton({ slug, initialLikes }: LikeButtonProps) {
     }, [slug]);
 
     const handleLikeClick = async () => {
-        // 이미 눌렀거나, 애니메이션 중이거나, 서버와 통신 중이면 클릭을 차단
         if (hasLiked || isAnimate || isLoading) return;
 
         setIsAnimate(true);
         setIsLoading(true);
 
-        // 0.3초 동안 애니메이션 효과
         setTimeout(() => setIsAnimate(false), 300);
 
-        // 백엔드(서버 액션)에 좋아요 요청 전송
         const updated = await incrementLikes(slug);
         if (updated) {
             setLikes(updated.likes);
@@ -72,12 +69,12 @@ export default function LikeButton({ slug, initialLikes }: LikeButtonProps) {
         <button
             onClick={handleLikeClick}
             disabled={hasLiked || isLoading}
-            className={`flex items-center gap-2 rounded-full border px-5 py-2.5 shadow-sm transition-all duration-300 active:scale-95 ${
+            className={`flex cursor-pointer items-center gap-2 rounded-full border px-5 py-2.5 shadow-sm transition-all duration-300 active:scale-95 ${
                 hasLiked
-                    ? 'cursor-not-allowed border-red-200 bg-red-50 text-red-500 opacity-90' // 🌟 이미 누른 상태 UI
+                    ? 'border-red-300 bg-red-50 text-red-600 opacity-100 hover:border-red-400 hover:bg-red-200/70 dark:border-red-700 dark:bg-red-950/40 dark:text-red-300 dark:hover:border-red-400 dark:hover:bg-red-500/30'
                     : isAnimate
-                      ? 'scale-110 border-red-400 bg-red-50 text-red-500'
-                      : 'border-gray-200 text-gray-700 hover:border-red-300 hover:bg-red-50/50 dark:border-slate-800 dark:text-slate-300 dark:hover:bg-red-950/20'
+                      ? 'scale-110 border-red-400 bg-red-100 text-red-600 dark:border-red-400 dark:bg-red-900/60 dark:text-red-300'
+                      : 'border-gray-200 text-gray-700 hover:border-red-300 hover:bg-red-50/50 dark:border-slate-800 dark:text-slate-300 dark:hover:border-red-500/30 dark:hover:bg-red-950/40 dark:hover:text-red-400'
             }`}
         >
             <span className={hasLiked ? 'animate-pulse' : 'opacity-60'}>❤️</span>
