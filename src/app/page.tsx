@@ -15,8 +15,6 @@ export default async function BlogHomePage() {
             <NotionLiveRefresh />
             {/* 상단 헤더 */}
             <HeroHeader />
-            {/* 대형 프로필 & 자기소개 섹션 */}
-            {/*<Profile />*/}
             {/* 주요 프로젝트 */}
             <FeaturedProjects />
             {/* 최신 글 목록 */}
