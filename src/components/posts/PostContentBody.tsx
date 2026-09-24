@@ -6,9 +6,30 @@ interface PostContentBodyProps {
     contentHtml: string;
 }
 
+interface HeadingItem {
+    id: string;
+    text: string;
+    level: number;
+}
+
+/** 헤딩 텍스트를 앵커 링크로 쓸 수 있는 slug로 변환합니다. (한글도 그대로 유지, 공백/특수문자만 정리) */
+function slugify(text: string, usedSlugs: Map<string, number>): string {
+    const base =
+        text
+            .trim()
+            .toLowerCase()
+            .replace(/[^\p{L}\p{N}\s-]/gu, '')
+            .replace(/\s+/g, '-') || 'section';
+
+    const count = usedSlugs.get(base) ?? 0;
+    usedSlugs.set(base, count + 1);
+    return count === 0 ? base : `${base}-${count}`;
+}
+
 export default function PostContentBody({ contentHtml }: PostContentBodyProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const [images, setImages] = useState<string[]>([]);
+    const [headings, setHeadings] = useState<HeadingItem[]>([]);
     // -1은 모달이 닫힌 상태, 0 이상은 열린 상태
     const [currentIndex, setCurrentIndex] = useState<number>(-1);
 
@@ -17,6 +38,17 @@ export default function PostContentBody({ contentHtml }: PostContentBodyProps) {
         const imgElements = containerRef.current.querySelectorAll('img');
         const srcList = Array.from(imgElements).map((img) => img.src);
         setImages(srcList);
+
+        // 목차(TOC) 구성: h1~h3에 고유 id를 부여하고 목록을 수집합니다.
+        const usedSlugs = new Map<string, number>();
+        const headingElements = containerRef.current.querySelectorAll('h1, h2, h3');
+        const headingList: HeadingItem[] = Array.from(headingElements).map((el) => {
+            const text = el.textContent?.trim() ?? '';
+            const id = slugify(text, usedSlugs);
+            el.id = id;
+            return { id, text, level: Number(el.tagName.substring(1)) };
+        });
+        setHeadings(headingList);
     }, [contentHtml]);
     const handlePrev = () => {
         setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
@@ -53,9 +85,31 @@ export default function PostContentBody({ contentHtml }: PostContentBodyProps) {
     };
     return (
         <>
+            {headings.length > 1 && (
+                <nav className="notion-toc mb-8 rounded-xl border border-slate-100 bg-slate-50/60 p-4 text-sm dark:border-slate-800 dark:bg-slate-900/40">
+                    <span className="mb-2 block text-xs font-bold tracking-wider text-slate-400 uppercase dark:text-slate-500">
+                        목차
+                    </span>
+                    <ul className="space-y-1.5">
+                        {headings.map((heading) => (
+                            <li
+                                key={heading.id}
+                                style={{ paddingLeft: `${(heading.level - 1) * 14}px` }}
+                            >
+                                <a
+                                    href={`#${heading.id}`}
+                                    className="text-slate-500 transition-colors hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400"
+                                >
+                                    {heading.text}
+                                </a>
+                            </li>
+                        ))}
+                    </ul>
+                </nav>
+            )}
             <div ref={containerRef} onClick={handleBodyClick}>
                 <article
-                    className="prose prose-lg dark:prose-invert notion-root-container prose-p:text-base prose-p:leading-8 prose-li:text-base prose-li:leading-8 prose-td:text-base prose-td:leading-7 prose-th:text-base prose-th:leading-7 prose-code:text-sm prose-pre:text-sm max-w-none font-sans select-text"
+                    className="prose prose-lg dark:prose-invert notion-root-container prose-headings:scroll-mt-24 prose-p:text-base prose-p:leading-8 prose-li:text-base prose-li:leading-8 prose-td:text-base prose-td:leading-7 prose-th:text-base prose-th:leading-7 prose-code:text-sm prose-pre:text-sm max-w-none font-sans select-text"
                     dangerouslySetInnerHTML={{ __html: contentHtml }}
                 />
             </div>
