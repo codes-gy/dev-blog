@@ -1,4 +1,6 @@
-export default function Error({ reset }: { error: Error; reset: () => void }) {
+'use client';
+
+export default function Error({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
     return (
         <div className="py-24 text-center">
             <h2 className="mb-4 text-xl font-bold text-slate-900 dark:text-slate-100">
