@@ -22,11 +22,6 @@ const CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME || '';
 const DEFAULT_OG_IMAGE = process.env.DEFAULT_OG_IMAGE_PATH || 'https://devlog.io/default-og-image.png';
 const DEFAULT_IMAGE = process.env.DEFAULT_IMAGE_PATH || 'https://devlog.io/default-cover-image.png';
 
-function cleanImageUrl(url: string | null | undefined): string {
-    if (!url) return '';
-    return url.replace(/\s+/g, '').trim();
-}
-
 function getPureUrl(url: string | null | undefined): string {
     if (!url) return '';
     let cleaned = url.replace(/\s+/g, '').trim();
@@ -46,7 +41,7 @@ function getPureUrl(url: string | null | undefined): string {
             const nextDecoded = decodeURIComponent(decoded);
             if (nextDecoded === decoded) break;
             decoded = nextDecoded;
-        } catch (e) {
+        } catch {
             break;
         }
     }
@@ -82,7 +77,7 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
     }
     const pageTitle = `${post.title} | DevLog`;
     const pageDesc = post.description || '개발 및 기술 블로그입니다.';
-    const ogImageUrl = cleanImageUrl(post.coverImage) || DEFAULT_OG_IMAGE;
+    const ogImageUrl = getCloudinaryOgUrl(post.coverImage);
 
     return {
         title: pageTitle,
@@ -115,8 +110,7 @@ export default async function PostDetailPage({ params }: PostPageProps) {
     const post = await getBlogPost(slug);
     if (!post) notFound();
     const content = await getPostContent(post.id);
-    const rawCoverUrl = cleanImageUrl(post.coverImage);
-    const coverImageUrl = rawCoverUrl || DEFAULT_IMAGE;
+    const coverImageUrl = getCloudinaryCoverUrl(post.coverImage);
 
     // 진입 시 조회수를 실시간으로 1 증가, 누적된 데이터를 읽음
     const data = await prisma.post.findUnique({
@@ -166,8 +160,8 @@ export default async function PostDetailPage({ params }: PostPageProps) {
 
             <hr className="mt-16 mb-10 border-slate-200 dark:border-slate-800" />
 
-            {/* 소셜 공유 버튼 섹션 배치 개발중으로 hidden 처리 */}
-            <div className="mt-10 hidden border-b border-slate-100 pb-8 dark:border-slate-800/60">
+            {/* 소셜 공유 버튼 */}
+            <div className="mt-10 border-b border-slate-100 pb-8 dark:border-slate-800/60">
                 <ShareButtons
                     slug={slug}
                     title={post.title}
