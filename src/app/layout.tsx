@@ -1,5 +1,4 @@
 import React, { Suspense } from 'react';
-import Script from 'next/script';
 import Loading from '@/src/app/loading';
 import type { Metadata } from 'next';
 import { ThemeProvider } from 'next-themes';
@@ -17,12 +16,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     return (
         <html lang="ko" suppressHydrationWarning>
             <body className="flex min-h-screen flex-col bg-slate-50 text-slate-800 antialiased dark:bg-slate-950 dark:text-slate-100">
-                <Script
-                    async
-                    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3527850742207812"
-                    crossOrigin="anonymous"
-                    strategy="afterInteractive"
-                />
                 <ThemeProvider attribute="class" defaultTheme="dark">
                     <Header />
 

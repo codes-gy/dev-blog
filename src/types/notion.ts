@@ -135,13 +135,8 @@ export interface KakaoSDK {
     };
 }
 
-export interface AdsByGooglePush {
-    (obj: Record<string, never>): void;
-}
-
 declare global {
     interface Window {
-        adsbygoogle?: AdsByGooglePush[] | Record<string, unknown>[];
         Kakao?: KakaoSDK;
     }
 }
