@@ -4,11 +4,14 @@ import { Metadata } from 'next';
 import Comments from '@/src/components/posts/Comments';
 import LikeButton from '@/src/components/posts/LikeButton';
 import PostContentBody from '@/src/components/posts/PostContentBody';
+import PostNavigation from '@/src/components/posts/PostNavigation';
+import RelatedPosts from '@/src/components/posts/RelatedPosts';
 import ViewCounter from '@/src/components/posts/ViewCounter';
 import ShareButtons from '@/src/components/posts/share/ShareButtons';
-import { getBlogPost } from '@/src/lib/data/api';
+import { getAdjacentPosts, getBlogPost, getBlogPosts } from '@/src/lib/data/api';
 import { getPostContent } from '@/src/lib/data/parser';
 import { prisma } from '@/src/lib/prisma';
+import { estimateReadingMinutes } from '@/src/lib/reading-time';
 
 interface PostPageProps {
     params: Promise<{
@@ -111,6 +114,14 @@ export default async function PostDetailPage({ params }: PostPageProps) {
     if (!post) notFound();
     const content = await getPostContent(post.id);
     const coverImageUrl = getCloudinaryCoverUrl(post.coverImage);
+    const readingMinutes = estimateReadingMinutes(content);
+
+    // 이전/다음 글, 같은 카테고리의 관련 글을 함께 조회합니다.
+    const [{ prevPost, nextPost }, relatedPostsResult] = await Promise.all([
+        getAdjacentPosts(slug),
+        getBlogPosts(4, undefined, post.category),
+    ]);
+    const relatedPosts = relatedPostsResult.posts.filter((p) => p.slug !== slug).slice(0, 3);
 
     // 진입 시 조회수를 실시간으로 1 증가, 누적된 데이터를 읽음
     const data = await prisma.post.findUnique({
@@ -136,6 +147,8 @@ export default async function PostDetailPage({ params }: PostPageProps) {
                     </span>
                     <span className="text-slate-300 dark:text-slate-700">|</span>
                     <time className="text-slate-500 dark:text-slate-400">{post.publishedAt}</time>
+                    <span className="text-slate-300 dark:text-slate-700">|</span>
+                    <span className="text-slate-500 dark:text-slate-400">{readingMinutes}분 읽기</span>
                 </div>
                 {/* 실시간 조회수 표시 */}
                 <div className="shrink-0 items-center">
@@ -177,6 +190,12 @@ export default async function PostDetailPage({ params }: PostPageProps) {
                 </p>
                 <LikeButton slug={slug} initialLikes={initialLikes} />
             </div>
+
+            {/* 이전 글 / 다음 글 */}
+            <PostNavigation prevPost={prevPost} nextPost={nextPost} />
+
+            {/* 관련 글 */}
+            <RelatedPosts posts={relatedPosts} />
 
             {/* 댓글 */}
             <Comments postSlug={slug} />
