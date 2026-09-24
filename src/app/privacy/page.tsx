@@ -21,70 +21,26 @@ export default function PrivacyPolicyPage() {
                             1. 개인정보의 처리 목적 및 수집 항목
                         </h2>
                         <p className="text-slate-500 dark:text-slate-400">
-                            본 블로그는 별도의 회원가입 없이 콘텐츠를 자유롭게 이용할 수 있습니다. 단, 사용자가
-                            &apos;문의하기&apos; 시스템을 이용하는 경우 원활한 회신을 위해 이메일 주소를 수집합니다.
-                            또한, 인터넷 서비스 이용과정에서 **방문자의 IP 주소, 쿠키, 서비스 이용 기록, 방문 기록**이
-                            시스템에 의해 자동으로 생성되어 수집될 수 있습니다.
+                            본 블로그는 별도의 회원가입 없이 콘텐츠를 자유롭게 이용할 수 있습니다. 본 블로그는 이메일
+                            등 개인정보를 별도로 수집하지 않습니다. 다만, 인터넷 서비스 이용과정에서 **방문자의 IP
+                            주소, 쿠키, 서비스 이용 기록, 방문 기록**이 시스템에 의해 자동으로 생성되어 수집될 수
+                            있습니다.
                         </p>
                     </section>
 
                     <section>
                         <h2 className="mb-1 text-[13px] font-bold text-slate-800 md:mb-2 md:text-lg dark:text-slate-200">
-                            2. 쿠키(Cookie) 및 구글 애드센스 광고 안내
-                        </h2>
-                        <p className="mb-2 text-slate-500 dark:text-slate-400">
-                            본 블로그는 구글(Google, Inc.)에서 제공하는 웹 분석 및 광고 게재 시스템인 **구글
-                            애드센스(Google AdSense)**를 사용하고 있습니다.
-                        </p>
-                        <ul className="list-disc space-y-1 pl-4 text-slate-500 dark:text-slate-400">
-                            <li>
-                                구글을 포함한 제3자 판매자는 쿠키(Cookie)를 사용하여 사용자의 이전 방문 기록을 바탕으로
-                                맞춤형 광고를 게재합니다.
-                            </li>
-                            <li>
-                                구글의 광고 쿠키를 사용하여 구글 및 파트너사는 본 사이트 또는 다른 사이트의 방문 기록을
-                                토대로 사용자에게 알맞은 광고를 제공할 수 있습니다.
-                            </li>
-                            <li>
-                                사용자는 브라우저 설정에서 쿠키 수집을 거부하거나,{' '}
-                                <a
-                                    href="https://tools.google.com/dlpage/gaoptout"
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="text-blue-500 underline hover:text-blue-600"
-                                >
-                                    구글 광고 설정
-                                </a>
-                                을 통해 맞춤형 광고 게재를 비활성화할 수 있습니다.
-                            </li>
-                        </ul>
-                    </section>
-
-                    <section>
-                        <h2 className="mb-1 text-[13px] font-bold text-slate-800 md:mb-2 md:text-lg dark:text-slate-200">
-                            3. 개인정보의 보유 및 파기 절차
+                            2. 이용자의 권리와 그 행사방법
                         </h2>
                         <p className="text-slate-500 dark:text-slate-400">
-                            문의하기를 통해 접수된 이메일 및 데이터는 답변 및 사용자 피드백 처리가 완료된 후 지체 없이
-                            영구 파기됩니다. 관계 법령에 의해 특별히 보존할 필요가 있는 경우가 아니라면 어떠한 수집
-                            개인정보도 장기 보유하지 않는 것을 원칙으로 합니다.
+                            이용자는 언제든지 본 블로그와 관련하여 문의사항이 있는 경우 아래 이메일로 연락해 주시면
+                            지체 없이 답변드리겠습니다.
                         </p>
                     </section>
 
                     <section>
                         <h2 className="mb-1 text-[13px] font-bold text-slate-800 md:mb-2 md:text-lg dark:text-slate-200">
-                            4. 이용자의 권리와 그 행사방법
-                        </h2>
-                        <p className="text-slate-500 dark:text-slate-400">
-                            이용자는 언제든지 본 블로그에 수집된 본인의 이메일 정보 등에 대해 열람, 수정, 혹은 삭제를
-                            요청할 수 있습니다. 상단 혹은 푸터 메뉴의 &apos;문의하기&apos; 창구를 통해 연락해 주시면
-                            관리자는 지체 없이 즉각 파기 및 수정 조치하겠습니다.
-                        </p>
-                    </section>
-
-                    <section>
-                        <h2 className="mb-1 text-[13px] font-bold text-slate-800 md:mb-2 md:text-lg dark:text-slate-200">
-                            5. 권익침해 구제방법
+                            3. 권익침해 구제방법
                         </h2>
                         <p className="text-slate-500 dark:text-slate-400">
                             이용자는 개인정보침해에 대한 신고나 상담이 필요한 경우 아래의 정부 기관에 문의하여 도움을
@@ -99,7 +55,7 @@ export default function PrivacyPolicyPage() {
 
                     <section>
                         <h2 className="mb-1 text-[13px] font-bold text-slate-800 md:mb-2 md:text-lg dark:text-slate-200">
-                            6. 개인정보 보호책임자 및 안내
+                            4. 개인정보 보호책임자 및 안내
                         </h2>
                         <p className="text-slate-500 dark:text-slate-400">
                             본 블로그는 이용자의 개인정보를 보호하고 관련 불만을 처리하기 위하여 아래와 같이 관리자를
@@ -110,7 +66,7 @@ export default function PrivacyPolicyPage() {
                                 • <strong>담당자:</strong> 블로그 운영진
                             </p>
                             <p className="mt-1">
-                                • <strong>문의처:</strong> 사이트 내 &apos;문의하기&apos; 페이지 양식 이용
+                                • <strong>문의처:</strong> podojjang_kr@naver.com
                             </p>
                         </div>
                     </section>
