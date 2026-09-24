@@ -36,9 +36,6 @@ export default function Footer() {
                     <Link href="/terms" className={getLinkStyle('/terms')}>
                         서비스 이용약관
                     </Link>
-                    <Link href="/contact" className="transition-colors hover:text-blue-600">
-                        문의하기
-                    </Link>
                 </div>
 
                 <p className="text-center text-[10px] leading-relaxed font-medium text-slate-500 md:text-right md:text-xs dark:text-slate-400">
