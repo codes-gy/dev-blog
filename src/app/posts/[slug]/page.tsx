@@ -1,7 +1,6 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
-import AdSenseInArticle from '@/src/components/posts/AdSenseInArticle';
 import Comments from '@/src/components/posts/Comments';
 import LikeButton from '@/src/components/posts/LikeButton';
 import PostContentBody from '@/src/components/posts/PostContentBody';
@@ -166,9 +165,6 @@ export default async function PostDetailPage({ params }: PostPageProps) {
             <PostContentBody contentHtml={content} />
 
             <hr className="mt-16 mb-10 border-slate-200 dark:border-slate-800" />
-
-            {/* 본문 하단 전용 구글 애드센스 광고 */}
-            <AdSenseInArticle />
 
             {/* 소셜 공유 버튼 섹션 배치 개발중으로 hidden 처리 */}
             <div className="mt-10 hidden border-b border-slate-100 pb-8 dark:border-slate-800/60">
