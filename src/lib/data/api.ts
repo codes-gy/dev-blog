@@ -138,6 +138,26 @@ export async function getBlogPost(slug: string): Promise<Post | null> {
     }
 }
 
+/**
+ * 현재 게시글의 이전 글(더 최근에 작성된 글) / 다음 글(더 이전에 작성된 글)을 조회합니다.
+ * 전체 발행글을 최신순으로 최대 100개까지 가져온 뒤, 현재 slug의 앞뒤 항목을 찾습니다.
+ * (블로그 게시글이 100개를 초과하면 그 범위를 벗어난 글의 이전/다음글은 조회되지 않습니다.)
+ */
+export async function getAdjacentPosts(slug: string): Promise<{ prevPost: Post | null; nextPost: Post | null }> {
+    const { posts } = await getBlogPosts(100);
+    const currentIndex = posts.findIndex((post) => post.slug === slug);
+
+    if (currentIndex === -1) {
+        return { prevPost: null, nextPost: null };
+    }
+
+    return {
+        // 목록은 최신순 정렬이므로, currentIndex 이전 항목이 더 최근(다음) 글입니다.
+        prevPost: posts[currentIndex + 1] ?? null,
+        nextPost: posts[currentIndex - 1] ?? null,
+    };
+}
+
 export async function getAllCategories(): Promise<string[]> {
     if (!DATA_SOURCE_ID) return ['전체'];
     try {
