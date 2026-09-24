@@ -1,5 +1,4 @@
 import NotionLiveRefresh from '@/src/components/common/NotionLiveRefresh';
-import FeaturedProjects from '@/src/components/home/FeaturedProjects';
 import { HeroHeader } from '@/src/components/home/HeroHeader';
 import LatestPostsSection from '@/src/components/home/LatestPostsSection';
 import { getBlogPosts } from '@/src/lib/data/api';
@@ -15,8 +14,6 @@ export default async function BlogHomePage() {
             <NotionLiveRefresh />
             {/* 상단 헤더 */}
             <HeroHeader />
-            {/* 주요 프로젝트 */}
-            <FeaturedProjects />
             {/* 최신 글 목록 */}
             <LatestPostsSection posts={posts} />
         </div>
